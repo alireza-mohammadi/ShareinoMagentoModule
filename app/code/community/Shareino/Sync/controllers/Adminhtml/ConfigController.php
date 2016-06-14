@@ -11,7 +11,10 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function indexAction()
     {
-        echo "Shareino_Sync_Adminhtml_ConfigController_IndexAction";
+        $helper = Mage::helper("sync");
+//        var_dump($helper->getProductById(905));
+        echo json_encode($helper->getProductById(905));
+        
     }
 
     public function synchronizeAction()

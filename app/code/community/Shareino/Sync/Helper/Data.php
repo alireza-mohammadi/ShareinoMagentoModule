@@ -6,7 +6,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductById($productId)
     {
         $product = Mage::getModel('catalog/product')->load($productId);
-
+//        return $product->getOrigData();
         return $this->getProductDetail($product);
     }
 
@@ -14,7 +14,6 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
     {
 
         $attrs = $product->getData();
-
 
         $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
         $product_json = array(
@@ -32,7 +31,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "long_content" => $attrs["description"],
             "meta_keywords" => "",
             "meta_description" => "",
-            "image" => $attrs["sku"],
+            "image" => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage(),
             "images" => $attrs["sku"],
             "attributes" => ""
         );
