@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Shareino_Sync>
+            <version>0.1.0</version>
+        </Shareino_Sync>
+    </modules>
+</config>
