@@ -145,7 +145,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $url = 'http://shareino.ir/api/products';
         curl_setopt($curl, CURLOPT_URL, $url);
-        echo $products = json_encode($products);
+        $products = json_encode($products);
         $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/apitoken");
         if ($SHAREINO_API_TOKEN != null) {
 
@@ -177,6 +177,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
     }
+
     public function syncAll()
     {
         $r = $this->sendProductToServer($this->getAllProducts());
