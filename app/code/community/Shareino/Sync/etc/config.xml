@@ -95,5 +95,15 @@
                 </web>
             </updates>
         </layout>
+        <events>
+            <catalog_product_save_after><!-- observe the event -->
+                <observers>
+                    <sync>
+                        <class>sync/observer</class>
+                        <method>attr_update</method>
+                    </sync>
+                </observers>
+            </catalog_product_save_after>
+        </events>
     </adminhtml>
 </config>
