@@ -34,7 +34,7 @@ app/
 
 # Remove Module File from ignoe
 !app/code/community/Shareino
-!app/code/community/Shareino/*
+!app/code/community/Shareino/*/
 !app/etc/modules/Shareino_Sync.xml
 !app/design/frontend/base/default/layout/shareino_front.xml
 !app/design/frontend/base/default/template/shareino
