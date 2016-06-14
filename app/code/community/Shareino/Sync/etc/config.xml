@@ -5,4 +5,41 @@
             <version>0.1.0</version>
         </Shareino_Sync>
     </modules>
+
+    <global>
+        <models>
+            <sync>
+                <class>Shareino_Sync_Model</class>
+            </sync>
+        </models>
+        <helpers>
+            <sync>
+                <class>Shareino_Sync_Helper</class>
+            </sync>
+        </helpers>
+        <blocks>
+            <sync>
+                <class>Shareino_Sync_Block</class>
+            </sync>
+        </blocks>
+    </global>
+    <frontend>
+        <routers>
+            <sync>
+                <use>standard</use>
+                <args>
+                    <module>Shareino_Sync</module>
+                    <frontName>shareinosync</frontName>
+                </args>
+            </sync>
+        </routers>
+        <layout>
+            <updates>
+                <sync>
+                    <file>shareino_front.xml</file>
+                </sync>
+            </updates>
+        </layout>
+    </frontend>
+
 </config>
