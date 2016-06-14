@@ -6,16 +6,21 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
     public function getProductById($productId)
     {
         $product = Mage::getModel('catalog/product')->load($productId);
-//        return $product->getOrigData();
         return $this->getProductDetail($product);
     }
 
     public function getProductDetail($product)
     {
-
         $attrs = $product->getData();
 
         $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+
+        $gallery_images = $product->getMediaGalleryImages();
+        $galleris=array();
+        foreach ($gallery_images->getItems() as $g_image) {
+            $galleris[]= $g_image['url'];
+
+        }
         $product_json = array(
             "name" => $attrs["name"],
             "code" => $attrs["entity_id"],
@@ -32,7 +37,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "meta_keywords" => "",
             "meta_description" => "",
             "image" => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage(),
-            "images" => $attrs["sku"],
+            "images" => $galleris,
             "attributes" => ""
         );
 

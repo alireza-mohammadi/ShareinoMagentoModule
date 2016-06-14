@@ -12,9 +12,9 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
     public function indexAction()
     {
         $helper = Mage::helper("sync");
-//        var_dump($helper->getProductById(905));
-        echo json_encode($helper->getProductById(905));
-        
+        $product = $helper->getProductById(905);
+
+        echo json_encode($product);
     }
 
     public function synchronizeAction()
