@@ -28,8 +28,11 @@ var
 .htaccess.sample
 .idea
 
+# Ignore All App's files and directories
 !app
 app/
+
+# Remove Module File from ignoe
 !app/code/community/Shareino
 !app/code/community/Shareino/*
 !app/etc/modules/Shareino_Sync.xml
