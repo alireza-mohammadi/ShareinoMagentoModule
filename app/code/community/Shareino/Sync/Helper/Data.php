@@ -138,4 +138,43 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         return $product_json;
     }
 
+    function sendProductToServer($products)
+    {
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $url = 'http://shareino.ir/api/products';
+        curl_setopt($curl, CURLOPT_URL, $url);
+        echo $products = json_encode($products);
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/apitoken");
+        if ($SHAREINO_API_TOKEN != null) {
+
+
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $products);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                    "Accept : application/json",
+                    "Shareino-Api : $SHAREINO_API_TOKEN",
+                    "Content-Type:application/json")
+            );
+
+            $result = curl_exec($curl);
+        } else {
+            Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__("APi token does not exist"));
+            return false;
+
+        }
+        $result = json_decode($result, true);
+        if ($result['success']) {
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("All Products sync with ShareINO server :-)"));
+            return true;
+        } else {
+            $messages = $result['message'];
+            $msg = "";
+            foreach ($messages as $m)
+                $msg .= "  " . $m;
+            Mage::getSingleton('core/session')->addError(("Couldn't Sync product with ShareINO server :-(\n" . $msg));
+            return false;
+        }
+
+    }
 }
