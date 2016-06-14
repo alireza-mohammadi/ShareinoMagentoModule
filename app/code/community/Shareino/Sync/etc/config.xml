@@ -42,4 +42,51 @@
         </layout>
     </frontend>
 
+    <admin>
+        <routers>
+            <sync>
+                <use>admin</use>
+                <args>
+                    <module>Shareino_Sync</module>
+                    <frontName>shareinoadmin</frontName>
+                </args>
+            </sync>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <menu>
+            <sharein_tab module="sync">
+                <title>ShareINO</title>
+                <sort_order>72</sort_order>
+                <children>
+                    <config module="sync">
+                        <title>Config</title>
+                        <sort_order>0</sort_order>
+                        <action>shareinoadmin/adminhtml_config</action>
+                    </config>
+                    <synchronize module="sync">
+                        <title>Synchronize</title>
+                        <sort_order>1</sort_order>
+                        <action>shareinoadmin/adminhtml_config/synchronize</action>
+                    </synchronize>
+                </children>
+            </sharein_tab>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <Shareino_Sync>
+                            <title>Sync</title>
+                            <sort_order>10</sort_order>
+                        </Shareino_Sync>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
 </config>
