@@ -177,4 +177,19 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
     }
+    public function syncAll()
+    {
+        $r = $this->sendProductToServer($this->getAllProducts());
+        if ($r) {
+            Mage::getConfig()->saveConfig('shareino/syncAll', "1", 'default', 0);
+        }
+    }
+
+    public function sync($id)
+    {
+        if ($id != null) {
+            $this->sendProductToServer($this->getProductById($id));
+
+        }
+    }
 }
