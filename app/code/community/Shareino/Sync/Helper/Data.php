@@ -16,9 +16,9 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
 
         $gallery_images = $product->getMediaGalleryImages();
-        $galleris=array();
+        $galleris = array();
         foreach ($gallery_images->getItems() as $g_image) {
-            $galleris[]= $g_image['url'];
+            $galleris[] = $g_image['url'];
 
         }
         $product_json = array(
@@ -92,7 +92,10 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "is_in_stock",
             "is_salable",
             "meta_keywords",
-            "meta_description"
+            "meta_description",
+            "image_label",
+            "thumbnail_label",
+            "small_image_label"
         );
 
         foreach ($removeKeys as $key) {
