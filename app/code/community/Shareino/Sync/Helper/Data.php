@@ -2,6 +2,20 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    public function getAllProducts()
+    {
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToSelect('entity_id')
+            ->addAttributeToFilter('status', array('eq' => 1))//only disabled
+            ->load();
+        $products = array();
+        foreach ($collection->getData() as $product) {
+            $products[] = $this->getProductById($product["entity_id"]);
+        }
+        return $products;
+    }
+
 
     public function getProductById($productId)
     {

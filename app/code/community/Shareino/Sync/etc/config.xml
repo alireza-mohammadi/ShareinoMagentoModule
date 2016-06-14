@@ -88,5 +88,12 @@
                 </admin>
             </resources>
         </acl>
+        <layout>
+            <updates>
+                <web>
+                    <file>shareinoadminhtml.xml</file>
+                </web>
+            </updates>
+        </layout>
     </adminhtml>
 </config>

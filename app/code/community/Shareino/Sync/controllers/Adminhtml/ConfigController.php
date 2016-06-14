@@ -8,19 +8,23 @@
  */
 class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Action
 {
-
     public function indexAction()
     {
-        $helper = Mage::helper("sync");
-        $product = $helper->getProductById(905);
+        $this->loadLayout();
+        $this->_setActiveMenu('sharein_tab/');
+        $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Form'));
 
-        echo json_encode($product);
+        $this->renderLayout();
     }
 
     public function synchronizeAction()
     {
-        echo "Shareino_Sync_Adminhtml_ConfigController_synchronizeAction";
+        $this->loadLayout();
+        $this->renderLayout();
+        $this->_setActiveMenu('sharein_tab/');
+        $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Form'));
 
     }
+
 
 }
