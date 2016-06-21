@@ -23,7 +23,7 @@ class Shareino_Sync_Block_Adminhtml_Form_Edit_Form extends Mage_Adminhtml_Block_
         $fieldSet->addField('status', 'text', array(
             'label' => Mage::helper('sync')->__('Shareino Api Token :'),
             'name' => 'shareino_api_token',
-            'value' => Mage::getStoreConfig("shareino/apitoken"),
+            'value' => Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN"),
             'class' => 'required-entry',
             'required' => true
         ));
