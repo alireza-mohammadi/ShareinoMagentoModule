@@ -193,4 +193,34 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
         }
     }
+
+    /**
+     * @param $url part of url to send request
+     * @param null $body body of request
+     * @param $method method of request
+     * @return mixed|null return request's respones body or return null
+     */
+    public function sendRequset($url, $body = null, $method)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $url = SHAREINO_API_URL . $url;
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        $SHAREINO_API_TOKEN = get_site_option("SHAREINO_API_TOKEN");
+        if (!empty($SHAREINO_API_TOKEN)) {
+
+            if ($body != null)
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                    "Accept : application/json",
+                    "Authorization : Bearer $SHAREINO_API_TOKEN",
+                    "Content-Type:application/json")
+            );
+
+            return curl_exec($curl);
+        }
+        return null;
+    }
+
 }

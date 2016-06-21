@@ -31,7 +31,7 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
         if ($this->getRequest()->isPost()) {
             $token = $this->getRequest()->getParam("shareino_api_token");
             if ($token != null) {
-                Mage::getConfig()->saveConfig('shareino/apitoken', $token, 'default', 0);
+                Mage::getConfig()->saveConfig('shareino/SHAREINO_API_TOKEN', $token, 'default', 0);
                 $syncdAll = Mage::getStoreConfig("shareino/syncAll");
                 Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Api token updated"));
                 if ($syncdAll == null && $syncdAll != 1) {
@@ -43,11 +43,51 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
             $this->_redirect("*/*/");
         }
     }
-    
+
     public function syncAllAction()
     {
         Mage::helper("sync")->syncAll();
         $this->_redirect("*/*/");
     }
 
+
+    public function getAttributesAction()
+    {
+        echo "getAttributes";
+    }
+
+    public function deleteProductsAction()
+    {
+        echo "deleteProducts";
+    }
+
+    public function syncCatAction()
+    {
+
+//        $result = Mage::helper("sync")->sendRequset("categories", null, "GET");
+
+//        $result = json_decode($result, true);
+
+        $this->addCategory("cat");
+//        if ($result["status"]) {
+//            foreach ($result["categories"] as $category) {
+//
+//                $this->addCategory($category, null);
+//
+//            }
+//            return true;
+//        } else
+//            return false;
+
+    }
+
+    function addCategory($category, $parentId = null)
+    {
+        $category = Mage::getModel('catalog/category')
+            ->getCollection()
+            ->addAttributeToFilter('url_key', $category["slug"])
+            ->getFirstItem();
+
+        var_dump($category->getData());
+    }
 }

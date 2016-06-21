@@ -6,4 +6,9 @@
             <block type="sync/adminhtml_form_edit" name="adminform"/>
         </reference>
     </sync_adminhtml_config_index>
+    <sync_adminhtml_config_synchronize>
+        <reference name="content">
+            <block type="sync/adminhtml_form_edit" name="adminsync" template="shareino/sync_operation.phtml"/>
+        </reference>
+    </sync_adminhtml_config_synchronize>
 </layout>
