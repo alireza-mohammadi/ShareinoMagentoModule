@@ -32,11 +32,7 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
             $token = $this->getRequest()->getParam("shareino_api_token");
             if ($token != null) {
                 Mage::getConfig()->saveConfig('shareino/SHAREINO_API_TOKEN', $token, 'default', 0);
-                $syncdAll = Mage::getStoreConfig("shareino/syncAll");
                 Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Api token updated"));
-                if ($syncdAll == null && $syncdAll != 1) {
-                    Mage::helper("sync")->syncAll();
-                }
             } else {
                 Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__("Api token couldn't be null"));
             }
