@@ -2,6 +2,8 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    private $SHAREINO_API_URL = "http://v2.shareino.ir/api/";
+
     public function getAllProducts()
     {
         $collection = Mage::getModel('catalog/product')
@@ -138,7 +140,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         return $product_json;
     }
 
-    function sendProductToServer($products)
+    public function sendProductToServer($products)
     {
 
         $curl = curl_init();
@@ -202,14 +204,14 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function sendRequset($url, $body = null, $method)
     {
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $url = SHAREINO_API_URL . $url;
+        $url = $this->SHAREINO_API_URL . $url;
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-        $SHAREINO_API_TOKEN = get_site_option("SHAREINO_API_TOKEN");
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
         if (!empty($SHAREINO_API_TOKEN)) {
-
             if ($body != null)
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(

@@ -59,31 +59,59 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function syncCatAction()
     {
-
-//        $result = Mage::helper("sync")->sendRequset("categories", null, "GET");
-
-//        $result = json_decode($result, true);
-
-        $this->addCategory("cat");
-//        if ($result["status"]) {
-//            foreach ($result["categories"] as $category) {
-//
-//                $this->addCategory($category, null);
-//
-//            }
-//            return true;
-//        } else
-//            return false;
+        if ($this->getRequest()->isPost()) {
+            $result = Mage::helper("sync")->sendRequset("categories", null, "GET");
+            $result = json_decode($result, true);
+            if ($result["status"]) {
+                foreach ($result["categories"] as $category) {
+                    $this->addCategory($category, null);
+                }
+                Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("All categories recived and synecd."));
+            } else
+                Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Couldn't recived and synced all categories."));
+            $this->_redirect("*/*/synchronize");
+        }
 
     }
 
-    function addCategory($category, $parentId = null)
+    function addCategory($newCategory, $parentId = null)
     {
         $category = Mage::getModel('catalog/category')
             ->getCollection()
-            ->addAttributeToFilter('url_key', $category["slug"])
+            ->addAttributeToFilter('url_key', $newCategory["slug"])
             ->getFirstItem();
 
-        var_dump($category->getData());
+        if (empty($category->getData())) {
+
+            try {
+
+                $name = $newCategory["name"];
+                $slug = $newCategory["slug"];
+
+                $storeId = 0;
+                $category = Mage::getModel('catalog/category');
+                $category->setName($name);
+                $category->setUrlKey($slug);
+                $category->setIsActive(1);
+                $category->setDisplayMode('PRODUCTS');
+                $category->setIsAnchor(1); //for active anchor
+                $category->setStoreId($storeId);
+                $parentId = $parentId != null ? $parentId : Mage_Catalog_Model_Category::TREE_ROOT_ID;
+                $parentCategory = Mage::getModel('catalog/category')->load($parentId);
+                $category->setPath($parentCategory->getPath());
+
+                $category->save();
+            } catch (Exception $e) {
+                echo "Catch";
+
+                print_r($e);
+            }
+        }
+
+        $id = $category->getData("entity_id");
+        foreach ($newCategory["children"] as $child) {
+            $this->addCategory($child, $id);
+        }
     }
+
 }
