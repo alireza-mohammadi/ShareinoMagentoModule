@@ -42,10 +42,62 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-        Mage::helper("sync")->syncAll();
-        $this->_redirect("*/*/");
+
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToSelect('entity_id')
+            ->addAttributeToFilter('status', array('eq' => 1))
+            ->load();
+
+        $products = array();
+        foreach ($collection->getData() as $product) {
+            $products[] = Mage::helper("sync")->getProductById($product["entity_id"]);
+        }
+
+        $result = Mage::helper("sync")->sendRequest("products", $products, "POST");
+
+        $sync_failures = array();
+        $sync_success = array();
+        $failure = "Some Product couldn't sync with server : ";
+        $success = "";
+        $result = json_decode($result, true);
+        if (is_array($result)) {
+            foreach ($result as $sproducts) {
+                if (!$sproducts["status"]) {
+                    $sync_failures[] = $sproducts["code"];
+                    $failure .= "( " . $sproducts["code"] . " : "
+                        . $this->getErrors($sproducts["errors"]) . " ) |\t";
+
+                } else
+                    $sync_success[] = $sproducts["code"];
+
+            }
+        } else {
+            if ($result["status"] == false) {
+                $failure .= "\n Couldn't sync with shareino :"
+                    . $this->getErrors($result["message"]);
+
+
+            }
+        }
+        if (!empty($sync_success)) {
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Products synced with shareino Server"));
+        }
+
+        if (!empty($sync_failures))
+            Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($failure));
+        $this->_redirect("*/*/synchronize");
     }
 
+
+    function getErrors($errors)
+    {
+        $msg = "";
+        foreach ($errors as $error) {
+            $msg .= "\n\t$error";
+        }
+        return $msg;
+    }
 
     public function getAttributesAction()
     {
@@ -54,23 +106,25 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function deleteProductsAction()
     {
-        echo "deleteProducts";
+        if ($this->getRequest()->isPost()) {
+            $body = array("type" => "all");
+            $result = Mage::helper("sync")->sendRequest("products", $body, "DELETE");
+            echo $result;
+        }
     }
 
     public function syncCatAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $result = Mage::helper("sync")->sendRequset("categories", null, "GET");
-            $result = json_decode($result, true);
-            if ($result["status"]) {
-                foreach ($result["categories"] as $category) {
-                    $this->addCategory($category, null);
-                }
-                Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("All categories recived and synecd."));
-            } else
-                Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Couldn't recived and synced all categories."));
-            $this->_redirect("*/*/synchronize");
-        }
+        $result = Mage::helper("sync")->sendRequest("categories", null, "GET");
+        $result = json_decode($result, true);
+        if ($result["status"]) {
+            foreach ($result["categories"] as $category) {
+                $this->addCategory($category, null);
+            }
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("All categories recived and synecd."));
+        } else
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Couldn't recived and synced all categories."));
+        $this->_redirect("*/*/synchronize");
 
     }
 

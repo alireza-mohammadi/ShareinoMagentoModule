@@ -44,8 +44,9 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "price" => $attrs["price"],
             "sale_price" => $attrs["sku"],
             "discount" => "",
-            "quantity" => $stock->getQty(),
+            "quantity" => $stock->getQty()>=0?$stock->getQty():0,
             "weight" => $attrs["weight"],
+            "url" => $product->getUrlPath(),
             "brand_id" => "",
             "categories" => "",
             "short_content" => $attrs["short_description"],
@@ -55,6 +56,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "image" => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage(),
             "images" => $galleris,
             "attributes" => ""
+
         );
 
         $removeKeys = array(
@@ -127,7 +129,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
         $product_json["attributes"] = $customAttrs;
-
+        $product_json["variants"] = array();
 
         $catsIDs = $product->getCategoryIds();
         $cats = array();
@@ -145,10 +147,10 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $url = 'http://shareino.ir/api/products';
+        $url = $this->SHAREINO_API_URL . "products";
         curl_setopt($curl, CURLOPT_URL, $url);
         $products = json_encode($products);
-        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/apitoken");
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
         if ($SHAREINO_API_TOKEN != null) {
 
 
@@ -182,10 +184,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function syncAll()
     {
-        $r = $this->sendProductToServer($this->getAllProducts());
-        if ($r) {
-            Mage::getConfig()->saveConfig('shareino/syncAll', "1", 'default', 0);
-        }
+
     }
 
     public function sync($id)
@@ -202,7 +201,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
      * @param $method method of request
      * @return mixed|null return request's respones body or return null
      */
-    public function sendRequset($url, $body = null, $method)
+    public function sendRequest($url, $body = null, $method)
     {
 
         $curl = curl_init();
@@ -210,6 +209,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         $url = $this->SHAREINO_API_URL . $url;
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+
+        $body = json_encode($body);
         $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
         if (!empty($SHAREINO_API_TOKEN)) {
             if ($body != null)
