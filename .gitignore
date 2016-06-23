@@ -45,3 +45,4 @@ app/
 !app/design/adminhtml/default/default/template/shareino/*
 
 
+!/skin/adminhtml/default/default/images/shareino_logo.png
