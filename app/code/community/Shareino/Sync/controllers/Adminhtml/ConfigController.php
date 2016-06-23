@@ -106,11 +106,14 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function deleteProductsAction()
     {
-        if ($this->getRequest()->isPost()) {
-            $body = array("type" => "all");
-            $result = Mage::helper("sync")->sendRequest("products", $body, "DELETE");
-            echo $result;
-        }
+        $body = array("type" => "all");
+        $result = Mage::helper("sync")->sendRequest("products", $body, "DELETE");
+        $result = json_decode($result, true);
+        if ($result["status"])
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Products Deleted from Shareino Server."));
+        else
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Couldn't deleted products from server."));
+        $this->_redirect("*/*/synchronize");
     }
 
     public function syncCatAction()
