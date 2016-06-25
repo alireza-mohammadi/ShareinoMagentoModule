@@ -55,13 +55,13 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
         }
 
         $result = Mage::helper("sync")->sendRequest("products", $products, "POST");
-
+        
         $sync_failures = array();
         $sync_success = array();
-        $failure = "Some Product couldn't sync with server : ";
+        $failure = "";
         $success = "";
         $result = json_decode($result, true);
-        if (is_array($result)) {
+        if (!isset($result["status"])) {
             foreach ($result as $sproducts) {
                 if (!$sproducts["status"]) {
                     $sync_failures[] = $sproducts["code"];
@@ -73,10 +73,10 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
             }
         } else {
-            if ($result["status"] == false) {
+            if (!$result["status"]) {
                 $failure .= "\n Couldn't sync with shareino :"
                     . $this->getErrors($result["message"]);
-
+                $sync_failures["ids"]="all";
 
             }
         }
