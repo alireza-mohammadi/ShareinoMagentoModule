@@ -54,8 +54,9 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
             $products[] = Mage::helper("sync")->getProductById($product["entity_id"]);
         }
 
-        $result = Mage::helper("sync")->sendRequest("products", $products, "POST");
         
+        echo  $result = Mage::helper("sync")->sendRequest("products", $products, "POST");
+        die;
         $sync_failures = array();
         $sync_success = array();
         $failure = "";
