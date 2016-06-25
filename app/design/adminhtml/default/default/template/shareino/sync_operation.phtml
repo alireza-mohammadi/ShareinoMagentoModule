@@ -1,0 +1,35 @@
+<div class="content-header">
+    <a href="shareino.com" style="width: 100%; text-align: center ; display: block">
+        <img src="<?php echo $this->getSkinUrl("images/shareino_logo.png") ?>"/>
+    </a>
+</div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><a href="http://shareino.com">ShareINO</a> server
+            synchronize operations</h4>
+        <div class="form-buttons"></div>
+    </div>
+    <div class="fieldset " id="entity_form">
+        <div class="hor-scroll">
+
+            <p>
+
+            <form action="<?php echo $this->getOperationAction("syncAll"); ?>">
+                <button type="submit" class="scalable save" style="">
+                    <span><span><span>Sync All Products</span></span></span></button>
+            </form>
+            <form action="<?php echo $this->getOperationAction("syncCat"); ?>">
+                <button type="submit" class="scalable save" style="">
+                    <span><span><span>Get All Category of ShareINO</span></span></span></button>
+            </form>
+<!--            <form action="--><?php //echo $this->getOperationAction("getAttributes"); ?><!--">-->
+<!--                <button type="submit" class="scalable save" style="">-->
+<!--                    <span><span><span>Get all attribute from ShareINO server</span></span></span></button>-->
+<!--            </form>-->
+            <form action="<?php echo $this->getOperationAction("deleteProducts"); ?>">
+                <button type="submit" class="scalable back" style="">
+                    <span><span><span>Delete all products from ShareINO server</span></span></span></button>
+            </form>
+        </div>
+    </div>
+</div>
