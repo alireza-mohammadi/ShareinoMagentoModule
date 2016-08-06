@@ -27,7 +27,49 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getProductDetail($product)
     {
+
         $attrs = $product->getData();
+
+        $variations = array();
+
+        if ($product->isConfigurable()) {
+
+            $configurableProduct = $product->getTypeInstance(true);
+            $confAttrs = $configurableProduct->getConfigurableAttributesAsArray($product);
+
+            $chileds = $configurableProduct->getChildrenIds($product->entity_id);
+
+            foreach ($chileds[0] as $child) {
+                $children = Mage::getModel('catalog/product')->load($child);
+//                $this->j($children->getData());
+                if ($children) {
+                    $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($children);
+                    $var = array(
+                        "code" => $child,
+                        "quantity" => $stock->getQty() >= 0 ? $stock->getQty() : 0,
+                        "sku" => $children->getData("sku"),
+                        "price" => $children->getData("price")
+                    );
+
+                    $attribute = array();
+                    foreach ($confAttrs as $conf) {
+                        $value = $children->getResource()
+                            ->getAttribute($conf["attribute_code"])
+                            ->getSource()
+                            ->getOptionText($children->getData($conf["attribute_code"]));;
+                        $attribute[$conf["attribute_code"]] = array(
+                            "label" => $conf["frontend_label"],
+                            "value" => $value
+                        );
+                    }
+
+                    $var["variation"] = $attribute;
+                    $variations[] = $var;
+                }
+
+            }
+        }
+
 
         $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
 
@@ -44,7 +86,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "price" => $attrs["price"],
             "sale_price" => $attrs["sku"],
             "discount" => "",
-            "quantity" => $stock->getQty()>=0?$stock->getQty():0,
+            "quantity" => $stock->getQty() >= 0 ? $stock->getQty() : 0,
             "weight" => $attrs["weight"],
             "url" => $product->getUrlPath(),
             "brand_id" => "",
@@ -129,7 +171,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
         $product_json["attributes"] = $customAttrs;
-        $product_json["variants"] = array();
+        $product_json["variants"] = $variations;
 
         $catsIDs = $product->getCategoryIds();
         $cats = array();
@@ -138,7 +180,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             $cats[$_cat->getUrlKey()] = $_cat->getName();
         }
         $product_json["categories"] = $cats;
-
+        
+        $this->j($product_json);
         return $product_json;
     }
 
@@ -224,6 +267,49 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             return curl_exec($curl);
         }
         return null;
+    }
+
+    function dieObject($object, $kill = true, $json = false)
+    {
+        echo '<xmp style="text-align: left;">';
+        if ($json)
+            echo json_encode($object);
+        else
+            print_r($object);
+        echo '</xmp><br />';
+
+        if ($kill) {
+            die('END');
+        }
+
+        return $object;
+    }
+
+    public function d($object, $json)
+    {
+        $this->dieObject($object, true, $json);
+
+    }
+
+    public function j($object)
+    {
+        echo json_encode($object);
+        die;
+    }
+
+    public function p($object)
+    {
+        $this->dieObject($object, false);
+
+    }
+
+    public function v($object)
+    {
+
+        echo '<xmp style="text-align: left;">';
+        var_dump($object);
+        echo '</xmp><br />';
+        return $object;
     }
 
 }
