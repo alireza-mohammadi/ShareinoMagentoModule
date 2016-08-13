@@ -6,14 +6,11 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getAllProducts()
     {
-        $collection = Mage::getModel('catalog/product')
-            ->getCollection()
-            ->addAttributeToSelect('entity_id')
-            ->addAttributeToFilter('status', array('eq' => 1))//only disabled
-            ->load();
+
+        $ids = $this->getAllProductIds();
         $products = array();
-        foreach ($collection->getData() as $product) {
-            $products[] = $this->getProductById($product["entity_id"]);
+        foreach ($ids as $id) {
+            $products[] = $this->getProductById($id);
         }
         return $products;
     }
@@ -88,7 +85,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             "discount" => "",
             "quantity" => $stock->getQty() >= 0 ? $stock->getQty() : 0,
             "weight" => $attrs["weight"],
-            "url" => $product->getUrlPath(),
+            "url" => $product->getProductUrl(),
             "brand_id" => "",
             "categories" => "",
             "short_content" => $attrs["short_description"],
@@ -180,9 +177,103 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             $cats[$_cat->getUrlKey()] = $_cat->getName();
         }
         $product_json["categories"] = $cats;
-        
-        $this->j($product_json);
+
         return $product_json;
+    }
+
+
+    public function getAllProductsId()
+    {
+
+        /**
+         * Get the resource model
+         */
+        $resource = Mage::getSingleton('core/resource');
+
+        /**
+         * Retrieve the read connection
+         */
+        $readConnection = $resource->getConnection('core_read');
+
+        $productTable = $resource->getTableName('catalog/product');
+
+        $relationTable = $resource->getTableName('catalog/product_relation');
+
+        $query = 'SELECT * FROM ' . $resource->getTableName('catalog/product');
+
+        /**
+         * Execute the query and store the results in $results
+         */
+        $results = $readConnection->fetchAll($query);
+
+        /**
+         * Print out the results
+         */
+        var_dump($results);
+    }
+
+    public function getConfigurableProduct()
+    {
+        $ids = array();
+
+        $collection = Mage::getModel('catalog/product')->getCollection();
+        $collection->addAttributeToFilter('type_id', 'configurable');
+//        $collection->addAttributeToFilter('status', 1);
+//        $collection->addFieldToFilter(array(array('attribute'=>'visibility', 'neq'=>"1" )));
+
+        $_productCollection = $collection->load();
+
+        foreach ($_productCollection as $product) {
+            $ids[] = $product->getId();
+        }
+        return $ids;
+    }
+
+    public function getConfSimpleProduct()
+    {
+
+        $ids = [];
+        /**
+         * Get the resource model
+         */
+        $resource = Mage::getSingleton('core/resource');
+
+        /**
+         * Retrieve the read connection
+         */
+        $readConnection = $resource->getConnection('core_read');
+
+        $query = 'SELECT child_id FROM ' . $resource->getTableName('catalog/product_relation')
+            . ' WHERE parent_id in ( ' . implode(" ,", $this->getConfigurableProduct()) . ');';
+
+
+        /**
+         * Execute the query and store the results in $results
+         */
+        $results = $readConnection->fetchAll($query);
+
+        foreach ($results as $product) {
+            $ids[] = $product['child_id'];
+        }
+
+        return $ids;
+    }
+
+    public function getAllProductIds()
+    {
+        $ids = array();
+
+        $collection = Mage::getModel('catalog/product')->getCollection();
+        $collection->addAttributeToFilter('status', 1);
+        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => "1")));
+        $collection->addAttributeToFilter('entity_id', array('nin' => $this->getConfSimpleProduct()));
+
+        $_productCollection = $collection->load();
+
+        foreach ($_productCollection as $product) {
+            $ids[] = $product->getId();
+        }
+        return $ids;
     }
 
     public function sendProductToServer($products)
