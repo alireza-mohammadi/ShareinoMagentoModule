@@ -10,7 +10,19 @@
         <models>
             <sync>
                 <class>Shareino_Sync_Model</class>
+                <resourceModel>Shareino_Sync_resource</resourceModel>
             </sync>
+            <Shareino_Sync_resource>
+                <class>Inchoo_DBScript_Model_Resource</class>
+                <entities>
+                    <synced>
+                        <table>Shareino_Sync_synced</table>
+                    </synced>
+                    <organized>
+                        <table>Shareino_Sync_organized</table>
+                    </organized>
+                </entities>
+            </Shareino_Sync_resource>
         </models>
         <helpers>
             <sync>

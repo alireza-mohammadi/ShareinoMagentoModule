@@ -43,8 +43,8 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
     public function syncAllAction()
     {
 
-
         $allProduct = Mage::helper("sync")->getAllProducts();
+
 //        $collection = Mage::getModel('catalog/product')
 //            ->getCollection()
 //            ->addAttributeToSelect('entity_id')
@@ -56,46 +56,45 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 //            $products[] = Mage::helper("sync")->getProductById($product["entity_id"]);
 //        }
 //
-//        $chuck_products = array_chunk($products, 100, true);
+        $chuck_products = array_chunk($allProduct, 200);
 //
-//        $sync_failures = array();
-//        $sync_success = array();
-//        $failure = "";
-//        $success = "";
-//        foreach ($chuck_products as $products_segment) {
-//
-//            echo $result = Mage::helper("sync")->sendRequest("products", $products_segment, "POST");
-//            die;
-//
-//            $result = json_decode($result, true);
-//            if (!isset($result["status"])) {
-//                foreach ($result as $sproducts) {
-//                    if (!$sproducts["status"]) {
-//                        $sync_failures[] = $sproducts["code"];
-//                        $failure .= "( " . $sproducts["code"] . " : "
-//                            . $this->getErrors($sproducts["errors"]) . " ) |\t";
-//
-//                    } else
-//                        $sync_success[] = $sproducts["code"];
-//
-//                }
-//            } else {
-//                if (!$result["status"]) {
-//                    $failure .= "\n Couldn't sync with shareino :"
-//                        . $this->getErrors($result["message"]);
-//                    $sync_failures["ids"] = "all";
-//
-//                }
-//            }
-//        }
-//
-//        if (!empty($sync_success)) {
-//            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Products synced with shareino Server"));
-//        }
-//
-//        if (!empty($sync_failures))
-//            Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($failure));
-//        $this->_redirect("*/*/synchronize");
+        $sync_failures = array();
+        $sync_success = array();
+        $failure = "";
+        $success = "";
+        foreach ($chuck_products as $products_segment) {
+
+            echo $result = Mage::helper("sync")->sendRequest("products", json_encode($products_segment), "POST");
+            die;
+            $result = json_decode($result, true);
+            if (!isset($result["status"])) {
+                foreach ($result as $sproducts) {
+                    if (!$sproducts["status"]) {
+                        $sync_failures[] = $sproducts["code"];
+                        $failure .= "( " . $sproducts["code"] . " : "
+                            . $this->getErrors($sproducts["errors"]) . " ) |\t";
+
+                    } else
+                        $sync_success[] = $sproducts["code"];
+
+                }
+            } else {
+                if (!$result["status"]) {
+                    $failure .= "\n Couldn't sync with shareino :"
+                        . $this->getErrors($result["message"]);
+                    $sync_failures["ids"] = "all";
+
+                }
+            }
+        }
+
+        if (!empty($sync_success)) {
+            Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Products synced with shareino Server"));
+        }
+
+        if (!empty($sync_failures))
+            Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($failure));
+        $this->_redirect("*/*/synchronize");
     }
 
 

@@ -2,7 +2,7 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    private $SHAREINO_API_URL = "http://v2.shareino.ir/api/";
+    private $SHAREINO_API_URL = "http://dev.scommerce.ir/api/";
 
     public function getAllProducts()
     {
@@ -99,6 +99,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         );
 
         $removeKeys = array(
+            "recurring_profile",
             "entity_id",
             "entity_type_id",
             "attribute_set_id",
@@ -291,7 +292,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             curl_setopt($curl, CURLOPT_POSTFIELDS, $products);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                     "Accept : application/json",
-                    "Shareino-Api : $SHAREINO_API_TOKEN",
+                    "Authorization : Bearer $SHAREINO_API_TOKEN",
                     "Content-Type:application/json")
             );
 
@@ -329,30 +330,44 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         }
     }
 
+
+
     /**
-     * @param $url part of url to send request
-     * @param null $body body of request
-     * @param $method method of request
-     * @return mixed|null return request's respones body or return null
+     * Called when need to send request to external server or site
+     *
+     * @param $url url address af Server
+     * @param null $body content of request like product
+     * @param $method
+     * @return mixed | null
      */
     public function sendRequest($url, $body = null, $method)
     {
 
+        // Init curl
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        // Generate url and set method in url
         $url = $this->SHAREINO_API_URL . $url;
         curl_setopt($curl, CURLOPT_URL, $url);
+
+        // Set method in curl
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
 
-        $body = json_encode($body);
-        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
+        // Get token from site setting
+        $SHAREINO_API_TOKEN =  Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
+
+
+        // Check if token has been set then send request to {@link http://shareino.com}
         if (!empty($SHAREINO_API_TOKEN)) {
-            if ($body != null)
+
+            // Set Body if its exist
+            if ($body != null) {
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+            }
+
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Accept : application/json",
-                    "Authorization : Bearer $SHAREINO_API_TOKEN",
-                    "Content-Type:application/json")
+                    "Authorization:Bearer $SHAREINO_API_TOKEN")
             );
 
             return curl_exec($curl);
