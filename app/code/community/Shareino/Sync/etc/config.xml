@@ -10,20 +10,28 @@
         <models>
             <sync>
                 <class>Shareino_Sync_Model</class>
-                <resourceModel>Shareino_Sync_resource</resourceModel>
+                <resourceModel>sync_resource</resourceModel>
             </sync>
-            <Shareino_Sync_resource>
-                <class>Inchoo_DBScript_Model_Resource</class>
+            <sync_resource>
+                <class>Shareino_Sync_Model_Resource</class>
                 <entities>
+                    <organize>
+                        <table>shareino_organized</table>
+                    </organize>
                     <synced>
-                        <table>Shareino_Sync_synced</table>
+                        <table>shareino_sync</table>
                     </synced>
-                    <organized>
-                        <table>Shareino_Sync_organized</table>
-                    </organized>
                 </entities>
-            </Shareino_Sync_resource>
+            </sync_resource>
         </models>
+        <resources>
+            <sync_setup>
+                <setup>
+                    <module>Shareino_Sync</module>
+                    <class>Shareino_Sync_Model_Resource_Setup</class>
+                </setup>
+            </sync_setup>
+        </resources>
         <helpers>
             <sync>
                 <class>Shareino_Sync_Helper</class>
