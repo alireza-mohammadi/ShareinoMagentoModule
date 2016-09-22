@@ -12,7 +12,7 @@ class Shareino_Sync_Block_Adminhtml_Form_Edit_Form extends Mage_Adminhtml_Block_
     {
         $form = new Varien_Data_Form(array(
                 'id' => 'edit_form',
-                'action' => $this->getUrl('*/*/updateToken', array('id' => $this->getRequest()->getParam('id'))),
+                'action' => $this->getUrl('*/*/updateConfig', array('id' => $this->getRequest()->getParam('id'))),
                 'method' => 'post',
                 'enctype' => 'multipart/form-data'
             )
@@ -27,6 +27,26 @@ class Shareino_Sync_Block_Adminhtml_Form_Edit_Form extends Mage_Adminhtml_Block_
             'class' => 'required-entry',
             'required' => true
         ));
+
+        $fieldSet->addField('price_factor', 'select', array(
+            'label'     => Mage::helper('sync')->__('واحد پول '),
+            'class'     => 'required-entry',
+            'required'  => true,
+            'name'      => 'shareino_price_factor',
+            'value' => Mage::getStoreConfig("shareino/SHAREINO_PRICE_FACTOR"),
+            'values' => array('-1'=>'Please Select..','0.1' => 'ریال','1' => 'تومان'),
+        ));
+
+        $fieldSet->addField('weight_factor', 'select', array(
+            'label'     => Mage::helper('sync')->__('نوع وزن'),
+            'class'     => 'required-entry',
+            'required'  => true,
+            'value' => Mage::getStoreConfig("shareino/SHAREINO_WEIGHT_FACTOR"),
+            'name'      => 'shareino_weight_factor',
+            'values' => array('-1'=>'Please Select..','0.0001' => 'گرم','1' => 'کیلو گرم'),
+        ));
+
+
         $this->setForm($form);
         $this->setValues($form->getData());
         $form->setUseContainer(true);
