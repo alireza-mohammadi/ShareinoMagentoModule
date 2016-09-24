@@ -1,6 +1,6 @@
 <?php
 
-class Shareino_Sync_Block_Adminhtml_Form_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
+class Shareino_Sync_Block_Adminhtml_Config_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
     /**
      * Preparing form

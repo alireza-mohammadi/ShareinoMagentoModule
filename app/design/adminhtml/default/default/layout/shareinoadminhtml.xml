@@ -3,7 +3,7 @@
     <sync_adminhtml_config_index>
         <update handle="editor"/>
         <reference name="content">
-            <block type="sync/adminhtml_form_edit" name="adminform"/>
+            <block type="sync/adminhtml_config_edit" name="adminconfig"/>
         </reference>
     </sync_adminhtml_config_index>
     <sync_adminhtml_config_synchronize>
