@@ -8,6 +8,7 @@ class Shareino_Sync_Adminhtml_OrganizeController extends Mage_Adminhtml_Controll
 {
     public function indexAction()
     {
-        echo "Organize Controller";
+        $this->loadLayout();
+        $this->renderLayout();
     }
 }
