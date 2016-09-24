@@ -81,15 +81,20 @@
                 <sort_order>72</sort_order>
                 <children>
                     <config module="sync">
-                        <title>Config</title>
+                        <title>پیکربندی</title>
                         <sort_order>0</sort_order>
                         <action>shareinoadmin/adminhtml_config</action>
                     </config>
-                    <synchronize module="sync">
-                        <title>Synchronize</title>
+                    <organize module="sync">
+                        <title>معادل سازی دسته ها </title>
                         <sort_order>1</sort_order>
-                        <action>shareinoadmin/adminhtml_config/synchronize</action>
-                    </synchronize>
+                        <action>shareinoadmin/adminhtml_organize</action>
+                    </organize>
+                    <synced module="sync">
+                        <title>همگام سازی</title>
+                        <sort_order>1</sort_order>
+                        <action>shareinoadmin/adminhtml_synced</action>
+                    </synced>
                 </children>
             </sharein_tab>
         </menu>
