@@ -35,7 +35,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
             'class' => 'required-entry',
             'required' => true,
             'name' => 'shareino_weight_factor',
-            'values' => array('-1' => 'Please Select..', '0.0001' => 'گرم', '1' => 'کیلو گرم'),
+            'values' => $this->getShareinoCategories(),
         ));
 
 
@@ -62,5 +62,15 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
         }
 
         return $categories;
+    }
+    public function getShareinoCategories()
+    {
+        $categories = $this->helper("sync")->sendRequset("categories", null, "GET");
+
+//        $categories=str_replace("--",'',$categories);
+        $categories=json_decode($categories,true);
+        $categories=$categories["categories"];
+       return $categories;
+
     }
 }

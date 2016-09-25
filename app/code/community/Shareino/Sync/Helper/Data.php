@@ -2,7 +2,67 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    private $SHAREINO_API_URL = "http://dev.scommerce.ir/api/";
+    const SHAREINO_API_URL = "http://shareino.ir/api/";
+
+    /**
+     * Called when need to send request to external server or site
+     *
+     * @param $url url address af Server
+     * @param null $body content of request like product
+     * @param $method
+     * @return mixed | null
+     */
+    public function sendRequset($url, $body = null, $method)
+    {
+
+        // Init curl
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        // Generate url and set method in url
+        $url = self::SHAREINO_API_URL . $url;
+        curl_setopt($curl, CURLOPT_URL, $url);
+
+        // Set method in curl
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+
+        // Get token from site setting
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
+
+
+        // Check if token has been set then send request to {@link http://shareino.com}
+        if (!empty($SHAREINO_API_TOKEN)) {
+
+            // Set Body if its exist
+            if ($body != null) {
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+            }
+//            curl_setopt($curl, CURLOPT_HEADER, true);    // we want headers
+
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                    "Authorization:Bearer $SHAREINO_API_TOKEN")
+            );
+
+            // Get result
+            $result = curl_exec($curl);
+
+            // Get Header Response header
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            if ($httpcode != 200) {
+
+                $result = array();
+                if($httpcode==401 || $httpcode==403){
+                    Mage::getSingleton('core/session')->addError(Mage::helper("sync")
+                        ->__("خطا ! لطفا صحت توکن و وضعیت دسترسی به وب سرویس شیرینو را بررسی کنید"));
+                }
+            }
+            return $result;
+        } else {
+            Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__("توکن وارد نشده است"));
+        }
+        return null;
+    }
 
     public function getAllProducts()
     {
@@ -331,7 +391,6 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
 
-
     /**
      * Called when need to send request to external server or site
      *
@@ -355,7 +414,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
 
         // Get token from site setting
-        $SHAREINO_API_TOKEN =  Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
 
 
         // Check if token has been set then send request to {@link http://shareino.com}
