@@ -23,19 +23,19 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
 
 
         $fieldSet->addField('local_category', 'select', array(
-            'label'     => Mage::helper('sync')->__('دسته بندی فروشگاه '),
-            'class'     => 'required-entry',
-            'required'  => true,
-            'name'      => 'local_category',
-            'values' => array('-1'=>'Please Select..','0.1' => 'ریال','1' => 'تومان'),
+            'label' => Mage::helper('sync')->__('دسته بندی فروشگاه '),
+            'class' => 'required-entry',
+            'required' => true,
+            'name' => 'local_category',
+            'values' => array('-1' => 'Please Select..', '0.1' => 'ریال', '1' => 'تومان'),
         ));
 
         $fieldSet->addField('weight_factor', 'select', array(
-            'label'     => Mage::helper('sync')->__('دسته بندی شیراینو'),
-            'class'     => 'required-entry',
-            'required'  => true,
-            'name'      => 'shareino_weight_factor',
-            'values' => array('-1'=>'Please Select..','0.0001' => 'گرم','1' => 'کیلو گرم'),
+            'label' => Mage::helper('sync')->__('دسته بندی شیراینو'),
+            'class' => 'required-entry',
+            'required' => true,
+            'name' => 'shareino_weight_factor',
+            'values' => array('-1' => 'Please Select..', '0.0001' => 'گرم', '1' => 'کیلو گرم'),
         ));
 
 
@@ -46,8 +46,21 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
 
     }
 
-    public function getLocalCategoris()
+    public function getLocalCategories()
     {
+        $collection = Mage::getModel('catalog/category')
+            ->getCollection()
+            ->addAttributeToSelect('id')
+            ->addAttributeToSelect('name')
+            ->addIsActiveFilter();
 
+        $collection = $collection->load();
+        $categories = array();
+
+        foreach ($collection as $category) {
+            $categories[] = array($category->getId(), $category->getName());
+        }
+
+        return $categories;
     }
 }
