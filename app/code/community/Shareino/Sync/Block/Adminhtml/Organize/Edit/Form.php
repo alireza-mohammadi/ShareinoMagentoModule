@@ -30,11 +30,11 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
             'values' => $this->getLocalCategories(),
         ));
 
-        $fieldSet->addField('weight_factor', 'select', array(
+        $fieldSet->addField('shareino_category', 'select', array(
             'label' => Mage::helper('sync')->__('دسته بندی شیراینو'),
             'class' => 'required-entry',
             'required' => true,
-            'name' => 'shareino_weight_factor',
+            'name' => 'shareino_category',
             'values' => $this->getShareinoCategories(),
         ));
 
@@ -63,14 +63,22 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
 
         return $categories;
     }
+
     public function getShareinoCategories()
     {
-        $categories = $this->helper("sync")->sendRequset("categories", null, "GET");
+        $cache = Mage::app()->getCache();
+        $cache->load("shareino_categories");
+        $categories = $cache->load("shareino_categories");
 
+        if (!$categories) {
+            $categories = $this->helper("sync")->sendRequset("categories", null, "GET");
+            $cache->save($categories,"shareino_categories",array("shareino_categories"),1800);
+        }
+
+        $categories = json_decode($categories, true);
+        $categories = $categories["categories"];
 //        $categories=str_replace("--",'',$categories);
-        $categories=json_decode($categories,true);
-        $categories=$categories["categories"];
-       return $categories;
+        return $categories;
 
     }
 }
