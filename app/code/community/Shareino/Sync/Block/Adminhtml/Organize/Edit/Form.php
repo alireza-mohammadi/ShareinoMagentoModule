@@ -27,7 +27,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
             'class' => 'required-entry',
             'required' => true,
             'name' => 'local_category',
-            'values' => array('-1' => 'Please Select..', '0.1' => 'ریال', '1' => 'تومان'),
+            'values' => $this->getLocalCategories(),
         ));
 
         $fieldSet->addField('weight_factor', 'select', array(
@@ -58,7 +58,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
         $categories = array();
 
         foreach ($collection as $category) {
-            $categories[] = array($category->getId(), $category->getName());
+            $categories[$category->getId()] = $category->getName();
         }
 
         return $categories;
