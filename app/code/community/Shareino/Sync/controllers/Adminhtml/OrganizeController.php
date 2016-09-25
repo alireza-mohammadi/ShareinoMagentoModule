@@ -11,4 +11,14 @@ class Shareino_Sync_Adminhtml_OrganizeController extends Mage_Adminhtml_Controll
         $this->loadLayout();
         $this->renderLayout();
     }
+    public function editAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+    public function newAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
 }
