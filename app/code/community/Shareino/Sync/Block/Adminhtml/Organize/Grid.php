@@ -57,9 +57,14 @@ class Shareino_Sync_Block_Adminhtml_Organize_Grid extends Mage_Adminhtml_Block_W
 
             )
         );
-        $this->addColumn('names',
+        $this->addColumn('name',
             array(
                 'header' => $this->__('نام'),
+                'index' => 'name',
+            )
+        );  $this->addColumn('names',
+            array(
+                'header' => $this->__('نام معادل'),
                 'index' => 'names',
             )
         );

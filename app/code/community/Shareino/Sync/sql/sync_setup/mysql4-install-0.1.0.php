@@ -18,8 +18,8 @@ $table = $installer->getConnection()->newTable($installer->getTable('sync/synced
         'nullable' => false,
     ))
     ->addColumn('errors', Varien_Db_Ddl_Table::TYPE_TEXT, null, array())
-    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array())
-    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array());
+    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array('nullable' => true))
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array('nullable' => true));
 
 $installer->getConnection()->createTable($table);
 
@@ -36,9 +36,10 @@ $table = $installer->getConnection()->newTable($installer->getTable('sync/organi
         'nullable' => false,
     ))
     ->addColumn('ids', Varien_Db_Ddl_Table::TYPE_TEXT, null, array())
+    ->addColumn('name', Varien_Db_Ddl_Table::TYPE_TEXT, null, array())
     ->addColumn('names', Varien_Db_Ddl_Table::TYPE_TEXT, null, array())
-    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array())
-    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array());
+    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array('nullable' => true))
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array('nullable' => true));
 
 $installer->getConnection()->createTable($table);
 
