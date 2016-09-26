@@ -7,7 +7,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit extends Mage_Adminhtml_Block_W
         parent::__construct();
         $this->_blockGroup = 'sync';
         $this->_controller = 'adminhtml_organize';
-        $this->_headerText = Mage::helper('sync')->__('Edit Form');
+        $this->_headerText = Mage::helper('sync')->__('Organize Categories');
         
 
     }

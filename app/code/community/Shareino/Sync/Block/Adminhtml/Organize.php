@@ -12,7 +12,7 @@ class Shareino_Sync_Block_Adminhtml_Organize extends Mage_Adminhtml_Block_Widget
         // ie. sync/adminhtml_organize
         $this->_blockGroup = 'sync';
         $this->_controller = 'adminhtml_organize';
-        $this->_headerText = $this->__('organize');
+        $this->_headerText = $this->__('Organize Categories');
 
         parent::__construct();
     }

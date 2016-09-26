@@ -10,18 +10,24 @@ class Shareino_Sync_Adminhtml_OrganizeController extends Mage_Adminhtml_Controll
     public function indexAction()
     {
         $this->loadLayout();
+        $this->_setActiveMenu('sharein_tab/');
+        $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Organize Categories'));
         $this->renderLayout();
     }
 
     public function editAction()
     {
         $this->loadLayout();
+        $this->_setActiveMenu('sharein_tab/');
+        $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Organize Categories'));
         $this->renderLayout();
     }
 
     public function newAction()
     {
         $this->loadLayout();
+        $this->_setActiveMenu('sharein_tab/');
+        $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Organize Categories'));
         $this->renderLayout();
     }
 
