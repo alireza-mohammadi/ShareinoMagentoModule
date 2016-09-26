@@ -21,7 +21,6 @@ class Shareino_Sync_Adminhtml_OrganizeController extends Mage_Adminhtml_Controll
 
     public function newAction()
     {
-
         $this->loadLayout();
         $this->renderLayout();
     }
@@ -51,18 +50,25 @@ class Shareino_Sync_Adminhtml_OrganizeController extends Mage_Adminhtml_Controll
                 $names = $categories["categories"][$ids];
             }
 
-            $organizeModel = Mage::getModel('sync/organize');
-            $organizeModel->load($cat_id, "cat_id");
-
 
             $data = array('cat_id' => $cat_id,
                 'ids' => $ids,
                 'name' => $name,
                 'names' => $names,
                 'model' => "category");
-            if ($organizeModel->getData()) {
-                $data["id_shareino_organized"]=$organizeModel->getId();
+
+            // Check if on edit action or duplicat record
+            $organizeModel = Mage::getModel('sync/organize');
+            $id = $this->getRequest()->getParam("id");
+            if (!$id) {
+
+                if ($organizeModel->load($cat_id, "cat_id")->getData())
+                    $id = $organizeModel->getId();
             }
+
+            if ($id)
+                $data["id_shareino_organized"] = $id;
+
 
             // The child category
 
