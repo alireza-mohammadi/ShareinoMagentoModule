@@ -10,6 +10,9 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
 
     protected function _prepareForm()
     {
+        $id = $this->getRequest()->getParam("id");
+        $organizeModel = Mage::getModel('sync/organize')->load($id);
+
         $form = new Varien_Data_Form(array(
                 'id' => 'edit_form',
                 'action' => $this->getUrl('*/*/save', array('id' => $this->getRequest()->getParam('id'))),
@@ -27,6 +30,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
             'class' => 'required-entry',
             'required' => true,
             'name' => 'local_category',
+            'value' => $organizeModel->getData("cat_id") ? $organizeModel->getData("cat_id") : null,
             'values' => $this->getLocalCategories(),
         ));
 
@@ -35,6 +39,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
             'class' => 'required-entry',
             'required' => true,
             'name' => 'shareino_category',
+            'value' => $organizeModel->getData("ids") ? $organizeModel->getData("ids") : null,
             'values' => $this->getShareinoCategories(),
         ));
 
@@ -72,7 +77,7 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
 
         if (!$categories) {
             $categories = $this->helper("sync")->sendRequset("categories", null, "GET");
-            $cache->save($categories,"shareino_categories",array("shareino_categories"),1800);
+            $cache->save($categories, "shareino_categories", array("shareino_categories"), 1800);
         }
 
         $categories = json_decode($categories, true);
