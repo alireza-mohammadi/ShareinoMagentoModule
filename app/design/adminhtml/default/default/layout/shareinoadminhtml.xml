@@ -27,4 +27,9 @@
         </reference>
     </sync_adminhtml_organize_edit>
 
+    <sync_adminhtml_synced_index>
+        <reference name="content">
+            <block type="sync/adminhtml_synced" name="adminsync" template="shareino/sync_operation.phtml"/>
+        </reference>
+    </sync_adminhtml_synced_index>
 </layout>
