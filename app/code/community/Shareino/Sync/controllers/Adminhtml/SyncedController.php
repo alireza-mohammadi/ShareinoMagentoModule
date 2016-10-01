@@ -20,7 +20,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-        Mage::helper("sync")->j($this->getAllProductIds());
+        $this->getAllProducts();
     }
 
 
@@ -258,14 +258,66 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         $product_json["variants"] = $variations;
 
         $catsIDs = $product->getCategoryIds();
+
+
         $cats = array();
         foreach ($catsIDs as $category_id) {
             $_cat = Mage::getModel('catalog/category')->load($category_id);
-            $cats[$_cat->getUrlKey()] = $_cat->getName();
+            $cats[] = array(
+                "id_category" => $_cat->getId(),
+                "link_rewrite" => $_cat->getUrlKey(),
+                "name" => $_cat->getName(),
+            );
+
         }
+        $cats = self::getShareinoids($cats);
         $product_json["categories"] = $cats;
+
 
         return $product_json;
     }
 
+
+    public static function getShareinoids($categories)
+    {
+
+        $categoriesIds = array();
+        $productCategories = array(
+            "matching" => array(),
+            "notMatching" => array()
+        );
+
+        $notmatching = array();
+        foreach ($categories as $category) {
+            $categoriesIds[] = $category["id_category"];
+            $notmatching[$category["id_category"]]
+                = array($category["link_rewrite"] => $category["name"]);
+        }
+
+
+        $collection = Mage::getModel('sync/organize')->getCollection();
+
+        $collection->addFieldToFilter('cat_id', array('in' => $categoriesIds));
+
+        $result = $collection->load()->getData();
+
+        if ($result) {
+            foreach ($result as $item) {
+                $productCategories["matching"] = array_merge(
+                    $productCategories["matching"],
+                    explode(",", $item["ids"])
+                );
+
+                unset($notmatching[$item["cat_id"]]);
+            }
+        }
+//        d($notmatching);
+        foreach ($notmatching as $item) {
+            $key = key($item);
+            $productCategories["notMatching"][$key] = $item[$key];
+        }
+
+        return $productCategories;
+
+    }
 }
