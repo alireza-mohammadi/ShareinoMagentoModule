@@ -44,8 +44,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             // Get result
-            $result = curl_exec($curl);
-
+           echo  $result = curl_exec($curl);
+die;
             // Get Header Response header
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 

@@ -12,7 +12,6 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         $this->loadLayout();
         $this->_setActiveMenu('sharein_tab/');
         $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Synchronization'));
-//        $this->_addContent($this->getLayout()->createBlock('sync/adminhtml_synced_edit'));
         $this->_addContent($this->getLayout()->createBlock('sync/adminhtml_synced'));
 
         $this->renderLayout();
@@ -20,22 +19,25 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-        $this->getAllProducts();
+        $ids = $this->getAllProductIds();
+        $ids = array_chunk($ids, 75);
+        $products=array();
+        foreach ($ids as $key => $part) {
+            foreach ($part as $id) {
+                $products[$key][] = $this->getProductById($id);
+            }
+        }
+
+        foreach ($products as $part){
+            Mage::helper("sync")->sendRequset("products", json_encode($part), "POST");
+        }
     }
 
 
     public function getAllProducts()
     {
 
-        $ids = $this->getAllProductIds();
-        $ids = array_chunk($ids, 75);
-
-        foreach ($ids as $key => $part) {
-            foreach ($part as $id) {
-                $products[$key][] = $this->getProductById($id);
-            }
-        }
-        return $products;
+        
     }
 
     public function getAllProductIds()
@@ -166,11 +168,11 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
             "name" => $attrs["name"],
             "code" => $attrs["entity_id"],
             "sku" => $attrs["sku"],
-            "price" => $attrs["price"],
+            "price" =>  isset($attrs["price"])?$attrs["price"]:null,
             "sale_price" => $attrs["sku"],
             "discount" => "",
             "quantity" => $stock->getQty() >= 0 ? $stock->getQty() : 0,
-            "weight" => $attrs["weight"],
+            "weight" => isset($attrs["weight"])?$attrs["weight"]:null,
             "url" => $product->getProductUrl(),
             "brand_id" => "",
             "categories" => "",
