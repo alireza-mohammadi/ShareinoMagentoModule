@@ -19,7 +19,9 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
+        $start= time();
         $ids = $this->getAllProductIds();
+        
         $ids = array_chunk($ids, 75);
         $products=array();
         foreach ($ids as $key => $part) {
@@ -27,7 +29,6 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $products[$key][] = $this->getProductById($id);
             }
         }
-
         foreach ($products as $part){
             Mage::helper("sync")->sendRequset("products", json_encode($part), "POST");
         }
