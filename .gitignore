@@ -13,3 +13,4 @@ app/*
 !app/design/frontend/base/default/layout/shareino_front.xml
 !app/design/frontend/base/default/template/shareino
 !app/etc/modules/Shareino_Sync.xml
+!app/design/adminhtml/default/default/template/shareino/sync_operation.phtml
