@@ -19,9 +19,18 @@ class Shareino_Sync_Block_Adminhtml_Synced extends Mage_Adminhtml_Block_Widget_G
 
     }
 
+    public function _prepareLayout()
+    {
+//        $head = $this->getLayout()->getBlock('head');
+//        $head->addJs('lib/jquery/jquery-1.10.2.min.js');
+//        $head->addJs("shareino/sync.js");
+
+        return parent::_prepareLayout();
+    }
+
     public function getOperationAction($op)
     {
 
-        return $this->getUrl("*/*/$op",array('id' => $this->getRequest()->getParam('id')));
+        return $this->getUrl("*/*/$op", array('id' => $this->getRequest()->getParam('id')));
     }
 }
