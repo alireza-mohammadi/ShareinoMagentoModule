@@ -19,26 +19,53 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-        $start= time();
+
         $ids = $this->getAllProductIds();
-        
+
         $ids = array_chunk($ids, 75);
-        $products=array();
+        $products = array();
         foreach ($ids as $key => $part) {
             foreach ($part as $id) {
                 $products[$key][] = $this->getProductById($id);
             }
         }
-        foreach ($products as $part){
-            Mage::helper("sync")->sendRequset("products", json_encode($part), "POST");
+        $results = array();
+        foreach ($products as $part) {
+            $r = Mage::helper("sync")->sendRequset("products", json_encode($part), "POST");
+            if ($r == null)
+                return;
+            $results[] = json_decode($r, true);
         }
+
+        foreach ($results as $part) {
+
+            foreach ($part as $item) {
+                $shsync = Mage::getModel("sync/synced");
+                $data = array(
+                    'product_id' => $item["code"],
+                    'status' => $item["status"],
+                    'errors' => isset($item["errors"]) & !empty($item["errors"]) ?
+                        implode(", ", $item["errors"]) : "",
+                    'updated_at' => date('Y-m-d H:i:s')
+                );
+
+                $shsync->setData($data);
+                $shsync->save();
+            }
+        }
+        Mage::getSingleton('core/session')->addError(Mage::helper("sync")
+            ->__("همگام سازی تمام محصولات انحام شد "));
+
+        $this->_redirect("*/*/");
+
+
     }
 
 
     public function getAllProducts()
     {
 
-        
+
     }
 
     public function getAllProductIds()
@@ -169,11 +196,11 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
             "name" => $attrs["name"],
             "code" => $attrs["entity_id"],
             "sku" => $attrs["sku"],
-            "price" =>  isset($attrs["price"])?$attrs["price"]:null,
+            "price" => isset($attrs["price"]) ? $attrs["price"] : null,
             "sale_price" => $attrs["sku"],
             "discount" => "",
             "quantity" => $stock->getQty() >= 0 ? $stock->getQty() : 0,
-            "weight" => isset($attrs["weight"])?$attrs["weight"]:null,
+            "weight" => isset($attrs["weight"]) ? $attrs["weight"] : null,
             "url" => $product->getProductUrl(),
             "brand_id" => "",
             "categories" => "",

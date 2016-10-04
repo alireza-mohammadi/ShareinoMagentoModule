@@ -2,7 +2,7 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const SHAREINO_API_URL = "http://shareino.ir/api/";
+    const SHAREINO_API_URL = "http://dev.scommerce.ir/api/";
 
     /**
      * Called when need to send request to external server or site
@@ -44,28 +44,27 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             // Get result
-             $result = curl_exec($curl);
+            $result = curl_exec($curl);;
+
             // Get Header Response header
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
             if ($httpcode != 200) {
 
-                $result = array();
-                if($httpcode==401 || $httpcode==403){
+                if ($httpcode == 401 || $httpcode == 403) {
                     Mage::getSingleton('core/session')->addError(Mage::helper("sync")
                         ->__("خطا ! لطفا صحت توکن و وضعیت دسترسی به وب سرویس شیرینو را بررسی کنید"));
                 }
+                return null;
             }
             return $result;
         } else {
             Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__("توکن وارد نشده است"));
+            return null;
         }
         return null;
     }
 
-  
-
-  
 
     public function getAllProductsId()
     {
