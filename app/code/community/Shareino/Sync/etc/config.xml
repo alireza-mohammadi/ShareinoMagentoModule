@@ -129,6 +129,14 @@
                     </sync>
                 </observers>
             </catalog_product_save_after>
+            <catalog_product_delete_after_done><!-- observe the event -->
+                <observers>
+                    <sync>
+                        <class>sync/observer</class>
+                        <method>delete_product</method>
+                    </sync>
+                </observers>
+            </catalog_product_delete_after_done>
         </events>
     </adminhtml>
 </config>
