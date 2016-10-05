@@ -6,7 +6,7 @@ class Shareino_Sync_Block_Adminhtml_Synced_Edit extends Mage_Adminhtml_Block_Wid
     {
         parent::__construct();
         $this->_blockGroup = 'sync';
-        $this->_controller = 'adminhtml_synced';
+        $this->_controller = 'adminhtml_Synced';
         $this->_headerText = Mage::helper('sync')->__('Edit Form');
         $this->_removeButton("back");
 
