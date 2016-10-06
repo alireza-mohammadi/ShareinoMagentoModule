@@ -137,6 +137,15 @@
                     </sync>
                 </observers>
             </catalog_product_delete_after_done>
+
+            <cataloginventory_stock_item_save_commit_after><!-- observe the event -->
+                <observers>
+                    <sync>
+                        <class>sync/observer</class>
+                        <method>attr_update</method>
+                    </sync>
+                </observers>
+            </cataloginventory_stock_item_save_commit_after>
         </events>
     </adminhtml>
 </config>
