@@ -77,6 +77,8 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
 
         if (!$categories) {
             $categories = $this->helper("sync")->sendRequset("categories", null, "GET");
+            if ($categories == null)
+                return;
             $cache->save($categories, "shareino_categories", array("shareino_categories"), 1800);
         }
 
