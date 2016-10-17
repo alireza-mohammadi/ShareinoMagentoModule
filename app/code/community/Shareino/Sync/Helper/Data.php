@@ -2,7 +2,7 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const SHAREINO_API_URL = "http://shareino.ir/api/";
+    const SHAREINO_API_URL = "http://dev.scommerce.ir/api/";
 
     /**
      * Called when need to send request to external server or site
