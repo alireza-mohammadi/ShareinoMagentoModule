@@ -30,12 +30,8 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
     {
         if ($this->getRequest()->isPost()) {
             $token = $this->getRequest()->getParam("shareino_api_token");
-            $weight_factor = $this->getRequest()->getParam("shareino_weight_factor");;
-            $price_factor = $this->getRequest()->getParam("shareino_price_factor");;
-            if ($token != null && $weight_factor != -1 &&$price_factor != -1) {
+            if ($token != null) {
                 Mage::getConfig()->saveConfig('shareino/SHAREINO_API_TOKEN', $token, 'default', 0);
-                Mage::getConfig()->saveConfig('shareino/SHAREINO_PRICE_FACTOR', $price_factor, 'default', 1);
-                Mage::getConfig()->saveConfig('shareino/SHAREINO_WEIGHT_FACTOR', $weight_factor, 'default', 1);
                 Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Api token updated"));
             } else {
                 Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__("لطفا تمامی فیلد ها را تکمیل کنید"));

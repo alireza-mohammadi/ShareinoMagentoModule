@@ -2,7 +2,7 @@
 
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const SHAREINO_API_URL = "http://dev.scommerce.ir/api/";
+    const SHAREINO_API_URL = "http://shareino.ir/api/v1/public/";
 
     /**
      * Called when need to send request to external server or site
@@ -40,7 +40,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 //            curl_setopt($curl, CURLOPT_HEADER, true);    // we want headers
 
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Authorization:Bearer $SHAREINO_API_TOKEN")
+                    "Authorization:Bearer $SHAREINO_API_TOKEN"),
+                    "User-Agent:Magento_Module_0.2.1"
             );
 
             // Get result
