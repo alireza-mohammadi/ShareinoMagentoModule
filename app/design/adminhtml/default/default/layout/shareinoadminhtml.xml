@@ -3,12 +3,33 @@
     <sync_adminhtml_config_index>
         <update handle="editor"/>
         <reference name="content">
-            <block type="sync/adminhtml_form_edit" name="adminform"/>
+            <block type="sync/adminhtml_config_edit" name="adminconfig"/>
         </reference>
     </sync_adminhtml_config_index>
-    <sync_adminhtml_config_synchronize>
+
+    <sync_adminhtml_organize_index>
         <reference name="content">
-            <block type="sync/adminhtml_form_edit" name="adminsync" template="shareino/sync_operation.phtml"/>
+            <block type="sync/adminhtml_organize" name="adminorganize"/>
         </reference>
-    </sync_adminhtml_config_synchronize>
+    </sync_adminhtml_organize_index>
+
+    <sync_adminhtml_organize_new>
+        <update handle="editor"/>
+        <reference name="content">
+            <block type="sync/adminhtml_organize_edit" name="adminorganize"/>
+        </reference>
+    </sync_adminhtml_organize_new>
+
+    <sync_adminhtml_organize_edit>
+        <update handle="editor"/>
+        <reference name="content">
+            <block type="sync/adminhtml_organize_edit" name="adminorganize"/>
+        </reference>
+    </sync_adminhtml_organize_edit>
+
+    <sync_adminhtml_synced_index>
+        <reference name="content">
+            <block type="sync/adminhtml_synced" name="adminsync" template="shareino/sync_operation.phtml"/>
+        </reference>
+    </sync_adminhtml_synced_index>
 </layout>

@@ -1,44 +1,42 @@
 <?php
+
+
 class Shareino_Sync_Model_Observer
 {
-	public function attr_update($observer) {
-		$product = $observer->getEvent()->getProduct();
-		$productId=$product->getData("entity_id");
-		$product=Mage::helper( "sync" )->getProductById($productId);
-		$result = Mage::helper("sync")->sendRequest("products", $product, "POST");
+    public function attr_update($observer)
+    {
+        $product = $observer->getEvent()->getProduct();
+        $productId = $product->getData("entity_id");
 
-		$sync_failures = array();
-		$sync_success = array();
-		$failure = "Some Product couldn't sync with server : ";
-		$success = "";
-		$result = json_decode($result, true);
-		if (is_array($result)) {
-			foreach ($result as $sproducts) {
-				if (!$sproducts["status"]) {
-					$sync_failures[] = $sproducts["code"];
-					$failure .= "( " . $sproducts["code"] . " : "
-						. $this->getErrors($sproducts["errors"]) . " ) |\t";
+        $product = Mage::helper("sync")->getProductById($productId);
 
-				} else
-					$sync_success[] = $sproducts["code"];
+        $r = Mage::helper("sync")->sendRequset("products", json_encode($product), "POST");
 
-			}
-		} else {
-			if ($result["status"] == false) {
-				$failure .= "\n Couldn't sync with shareino :"
-					. $this->getErrors($result["message"]);
+        if ($r == null)
+            return;
+        $r = json_decode($r, true);
+        foreach ($r as $item) {
+            $shsync = Mage::getModel("sync/synced");
+            $data = array(
+                'product_id' => $item["code"],
+                'status' => $item["status"],
+                'errors' => isset($item["errors"]) & !empty($item["errors"]) ?
+                    implode(", ", $item["errors"]) : "",
+                'updated_at' => date('Y-m-d H:i:s')
+            );
+            $shsync->setData($data);
+            $shsync->save();
+        }
+    }
 
+    public function delete_product($observer)
+    {
+        $product = $observer->getEvent()->getProduct();
+        $productId = $product->getData("entity_id");
 
-			}
-		}
-		if (!empty($sync_success)) {
-			Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Products synced with shareino Server"));
-		}
-
-		if (!empty($sync_failures))
-			Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($failure));
-
-	}
-	
+        $url = "products";
+        $body = array("type" => "selected", "code" => array($productId));
+        $result = Mage::helper("sync")->sendRequset($url, json_encode($body), "DELETE");
+    }
 
 }

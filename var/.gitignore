@@ -1,0 +1,10 @@
+/*
+!.gitignore
+
+# Module Directory
+!app/code/community
+app/code/community/*
+!app/code/community/Shareino
+
+# Module Files
+!app/etc/modules/Shareino_Sync.xml
