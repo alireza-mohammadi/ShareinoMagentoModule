@@ -64,8 +64,7 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
         $success = "";
         foreach ($chuck_products as $products_segment) {
 
-            echo $result = Mage::helper("sync")->sendRequest("products", json_encode($products_segment), "POST");
-            die;
+            $result = Mage::helper("sync")->sendRequest("products", json_encode($products_segment), "POST");
             $result = json_decode($result, true);
             if (!isset($result["status"])) {
                 foreach ($result as $sproducts) {
@@ -167,9 +166,8 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
                 $category->save();
             } catch (Exception $e) {
-                echo "Catch";
+                Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($e->getMessage()));
 
-                print_r($e);
             }
         }
 
