@@ -21,6 +21,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
         // Generate url and set method in url
         $url = self::SHAREINO_API_URL . $url;
+
         curl_setopt($curl, CURLOPT_URL, $url);
 
         // Set method in curl
@@ -40,13 +41,14 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 //            curl_setopt($curl, CURLOPT_HEADER, true);    // we want headers
 
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Authorization:Bearer $SHAREINO_API_TOKEN"),
-                    "User-Agent:Magento_Module_0.2.1"
+                    "Authorization:Bearer $SHAREINO_API_TOKEN",
+                    "User-Agent:Magento_Module_0.2.1")
+
             );
 
             // Get result
-            $result = curl_exec($curl);;
-
+            echo $result = curl_exec($curl);;
+            die;
             // Get Header Response header
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
@@ -65,7 +67,6 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         }
         return null;
     }
-
 
 
     public function getAllProductIds()
