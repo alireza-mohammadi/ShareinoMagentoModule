@@ -1,12 +1,8 @@
 <?php
 
-/**
- * Created by Saeed Darvish.
- * Email : sd.saeed.darvish@gmail.com
- * mobile : 09179960554
- */
 class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller_Action
 {
+
     public function indexAction()
     {
         $this->loadLayout();
@@ -19,7 +15,8 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-
+        print_r('syncAll');
+        die('1');
         $ids = Mage::helper('sync')->getAllProductIds();
 
         $ids = array_chunk($ids, 75);
@@ -45,7 +42,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                     'product_id' => $item["code"],
                     'status' => $item["status"],
                     'errors' => isset($item["errors"]) & !empty($item["errors"]) ?
-                        implode(", ", $item["errors"]) : "",
+                    implode(", ", $item["errors"]) : "",
                     'updated_at' => date('Y-m-d H:i:s')
                 );
 
@@ -54,12 +51,42 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
             }
         }
         Mage::getSingleton('core/session')->addError(Mage::helper("sync")
-            ->__("همگام سازی تمام محصولات انحام شد "));
+                ->__("همگام سازی تمام محصولات انحام شد "));
 
         $this->_redirect("*/*/");
-
-
     }
 
+    public function sendCategoryAction()
+    {
+        $category = Mage::getModel('catalog/category');
+        $tree = $category->getTreeModel();
+        $tree->load();
+
+        $ids = $tree->getCollection()->getAllIds();
+
+        $listCategory = [];
+        if ($ids) {
+            foreach ($ids as $id) {
+                $category->load($id);
+                $subcategories = $category->getChildrenCategories();
+
+                $parent_id = 0;
+                foreach ($subcategories as $subcategory) {
+                    $parent_id = $subcategory->getId();
+                }
+
+                $listCategory[] = [
+                    'id' => $category->getId(),
+                    'parent_id' => $parent_id,
+                    'name' => $category->getName()
+                ];
+            }
+        }
+
+        $result = Mage::helper("sync")->sendRequset("categories/sync", json_encode($listCategory), "POST");
+        Mage::getSingleton('core/session')->addError($result);
+
+        $this->_redirect("*/*/");
+    }
 
 }

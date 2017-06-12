@@ -1,13 +1,8 @@
 <?php
 
-/**
- * Created by IntelliJ IDEA.
- * User: saeed
- * Date: 6/8/16
- * Time: 4:19 PM
- */
 class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Action
 {
+
     public function indexAction()
     {
         $this->loadLayout();
@@ -23,7 +18,6 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
         $this->renderLayout();
         $this->_setActiveMenu('sharein_tab/');
         $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Form'));
-
     }
 
     public function updateConfigAction()
@@ -42,7 +36,8 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-
+        print_r('syncAll');
+        die('2');
         $allProduct = Mage::helper("sync")->getAllProducts();
 
 //        $collection = Mage::getModel('catalog/product')
@@ -72,17 +67,14 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
                         $sync_failures[] = $sproducts["code"];
                         $failure .= "( " . $sproducts["code"] . " : "
                             . $this->getErrors($sproducts["errors"]) . " ) |\t";
-
                     } else
                         $sync_success[] = $sproducts["code"];
-
                 }
             } else {
                 if (!$result["status"]) {
                     $failure .= "\n Couldn't sync with shareino :"
                         . $this->getErrors($result["message"]);
                     $sync_failures["ids"] = "all";
-
                 }
             }
         }
@@ -95,7 +87,6 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
             Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($failure));
         $this->_redirect("*/*/synchronize");
     }
-
 
     function getErrors($errors)
     {
@@ -135,7 +126,6 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
         } else
             Mage::getSingleton('core/session')->addSuccess(Mage::helper("sync")->__("Couldn't recived and synced all categories."));
         $this->_redirect("*/*/synchronize");
-
     }
 
     function addCategory($newCategory, $parentId = null)
@@ -167,7 +157,6 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
                 $category->save();
             } catch (Exception $e) {
                 Mage::getSingleton('core/session')->addError(Mage::helper("sync")->__($e->getMessage()));
-
             }
         }
 
