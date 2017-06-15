@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: keramatifar
- * Date: 09/09/2016
- * Time: 01:34 AM
- * 
- */
 $installer = $this;
 /* @var $installer Mage_Core_Model_Resource_Setup */
 
@@ -29,19 +22,6 @@ insert  into {$this->getTable('shareino_sync')}
 select id as `product_id`,0 AS `status` from  `{$this->getTable('posts')}`
       where post_type='product'
       and post_status='publish';
-
-
--- DROP TABLE IF EXISTS {$this->getTable('shareino_organized')};
-CREATE TABLE IF NOT EXISTS `{$this->getTable('shareino_organized')}` (
-  `id_shareino_organized` int(11) NOT NULL AUTO_INCREMENT,
-  `model` varchar(50) DEFAULT NULL,
-  `cat_id` int(10) unsigned NOT NULL,
-  `ids` varchar(200) NOT NULL,
-  `names` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`id_shareino_organized`),
-  UNIQUE KEY `cat_id_UNIQUE` (`cat_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='ShareIno Organized;
-
 ");
 
 $installer->endSetup();

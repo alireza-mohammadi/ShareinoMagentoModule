@@ -1,8 +1,28 @@
-<div class="content-header">
-    <a href="shareino.com" style="width: 100%; text-align: center ; display: block">
-        <img src="<?php echo $this->getSkinUrl("images/shareino_logo.png") ?>"/>
-    </a>
+<div id="wraper">
+    <div class="col-8">
+        <ul>
+            <li>ابتدا توکن خود را از سایت <a href="https://www.ShareINO.ir" target="_blank" title="شرینو - شبکه اجتماعی خرید">شرینو</a> دریافت کنید.</li>
+            <li>در صورت بروز هر گونه خطا ابتدا از صحت توکن خود اطمینان حاصل کنید</li>
+            <li>کالاهای شما بعد از دریافت تصاویر در سایت شرینو قابل مشاهده میباشند</li>
+            <li>در صورت بروز هر گونه مشکل یا ابهامی می‌توانید با کارشناسان ما در ارتباط باشید</li>
+        </ul>
+    </div>
+    <div class="col-4">
+        <a href="https://www.ShareINO.ir" target="_blank" title="شرینو -شبکه اجتماعی خرید">
+            <img src="<?php echo $this->getSkinUrl("images/shareino_logo.png") ?>" alt="شرینو - شبکه اجتماعی خرید" />
+        </a>
+    </div>
 </div>
+<div class="text-center" id="progress" hidden>
+    <p class="label label-default" id="progressText"></p>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped active" id="sync-progress" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+</div>
+<div class="alert fade in" id="MessageBox" hidden>
+    <p id="MessageText"></p>
+</div>
+<div class="clear"></div>
 <div class="entry-edit">
     <div class="entry-edit-head">
         <h4 class="icon-head head-edit-form fieldset-legend">
@@ -10,12 +30,224 @@
     </div>
     <div class="fieldset" id="entity_form">
         <div class="hor-scroll">
-            <form action="<?php echo $this->getOperationAction("syncAll"); ?>">
-                <button type="submit" class="scalable save" id="ShareinoSyncAllAction" style="height: 22px">ارسال محصولات</button>
+            <form class="sync-products" action="<?php echo $this->getOperationAction("syncProducts"); ?>">
+                <button type="submit" class="scalable save" style="height: 22px">ارسال محصولات</button>
             </form>
-            <form action="<?php echo $this->getOperationAction("sendCategory"); ?>">
-                <button type="submit" class="scalable save" id="sendCategory" style="height: 22px">ارسال دسته بندی ها</button>
+            <form class="sync-category" action="<?php echo $this->getOperationAction("syncCategory"); ?>">
+                <button type="submit" class="scalable save" style="height: 22px">ارسال دسته بندی ها</button>
             </form>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+    jQuery.noConflict();
+    jQuery(function() {
+        var messageBox = jQuery("#MessageBox");
+        var messageText = jQuery("#MessageText");
+        var operation = null;
+        var stop = false;
+        // ارسال دسته بندی ها*
+        jQuery('.sync-category').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+            operation = jQuery('.sync-category').attr("data-operation");
+            operation === "1" ? startSync('#state-btn-category', '#state-icon-category', '.sync-category') : stopSync('#state-btn-category', '#state-icon-category', '.sync-category');
+            if (stop) {
+                jQuery.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    url: '<?php echo $this->getOperationAction("syncCategory"); ?>',
+                    data: {
+                        ajax: true,
+                        action: 'syncCategory',
+                        ids: 1
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        if (data.status === false) {
+                            messageText.html(data.message);
+                            messageBox.show(500);
+                            messageBox.addClass('alert-danger');
+                        }
+                        if (data.status === true) {
+                            messageText.html("دسته بندی ها شما با موفقیت به سایت شرینو ارسال شد.");
+                            messageBox.show(500);
+                            messageBox.addClass('alert-success');
+                            startSync('#state-btn-category', '#state-icon-category', '.sync-category');
+                        }
+                    },
+                    error: function(data) {
+                        messageText.html(data.responseText);
+                        messageBox.show(500);
+                        messageBox.addClass("alert-danger");
+                    }
+                });
+            }
+        });
+
+        // ارسال محصولات
+        var productIDs = [<?php echo implode(',', Mage::registry('productIDs')); ?>];
+        var lenght = productIDs.length;
+        var progress = jQuery("#progress");
+        var submitProgress = jQuery("#sync-progress");
+        var progressText = jQuery("#progressText");
+        var chunk = 50;
+
+        jQuery('.sync-products').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+            progress.show(500);
+            operation = jQuery('.sync-products').attr("data-operation");
+            submitProgress.show();
+            SyncProducts();
+
+            lenght = productIDs.length;
+        });
+
+        function SyncProducts() {
+            if (productIDs.length <= 0) {
+                messageText.html("تمام محصولات شما با موفقیت به سایت شرینو ارسال شد.");
+                messageBox.show(500);
+                messageBox.addClass('alert-success');
+                startSync('#state-btn-product', '#state-icon-product', '.sync-products');
+                return;
+            }
+            var IDs = productIDs.splice(0, chunk);
+            operation === "1" ? startSync('#state-btn-product', '#state-icon-product', '.sync-products') : stopSync('#state-btn-product', '#state-icon-product', '.sync-products');
+            if (stop) {
+                jQuery.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    url: '<?php echo $this->getOperationAction("syncProducts"); ?>',
+                    data: {
+                        ajax: true,
+                        action: 'syncProducts',
+                        ids: IDs
+                    },
+                    success: function(data) {
+                        if (data.status === false) {
+                            messageText.html("توکن وارد شده صحیح نمیباشد.");
+                            messageBox.show(500);
+                            messageBox.addClass('alert-danger');
+                        } else {
+                            setPercentage();
+                            SyncProducts();
+                        }
+                    },
+                    error: function(data) {
+                        messageText.html(data.data);
+                        messageBox.show(500);
+                        messageBox.addClass("alert-danger");
+                    }
+                });
+            }
+        }
+        function setPercentage() {
+            var percentage = Math.round(((lenght - productIDs.length) * 100) / lenght);
+            percentage = percentage > 100 ? 100 : percentage;
+            var text = " تعداد " + (lenght - productIDs.length) + " از " + lenght + " کالا ارسال شد.";
+            progressText.html(text);
+            submitProgress
+                    .css("width", percentage + "%")
+                    .attr("aria-valuemin", percentage + "%")
+                    .html(percentage + "%");
+        }
+        function stopSync(btn, i, form) {
+            jQuery(btn).addClass('btn-danger');
+            jQuery(i).removeClass('fa-send');
+            jQuery(i).addClass('fa-stop');
+            jQuery(form).attr("data-operation", "1");
+            stop = true;
+        }
+        function startSync(btn, i, form) {
+            jQuery(btn).removeClass('btn-danger');
+            jQuery(i).addClass('fa-send');
+            jQuery(form).attr("data-operation", "0");
+            stop = false;
+        }
+    });
+</script>
+<style>
+    #wraper{
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .col-8{
+        direction:rtl;
+        float:right;
+    }
+    .col-4{
+        text-align: left;
+    }
+    .logo-shareino{
+        height: 74px;
+    }
+    ul{
+        padding:0;
+    }
+    .fade.in {
+        opacity: 1;
+    }
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+    .alert-danger {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+    }
+
+    .fade {
+        opacity: 0;
+        -webkit-transition: opacity .15s linear;
+        -o-transition: opacity .15s linear;
+        transition: opacity .15s linear;
+    }
+    .progress {
+        height: 20px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
+    }
+    .progress-bar {
+        float: left;
+        width: 0;
+        height: 100%;
+        font-size: 12px;
+        line-height: 20px;
+        color: #fff;
+        text-align: center;
+        background-color: #337ab7;
+        -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+        -webkit-transition: width .6s ease;
+        -o-transition: width .6s ease;
+        transition: width .6s ease;
+    }
+    .progress-striped .progress-bar,
+    .progress-bar-striped {
+        background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+        background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+        background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+        -webkit-background-size: 40px 40px;
+        background-size: 40px 40px;
+    }
+    .progress.active .progress-bar,
+    .progress-bar.active {
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        -o-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 2s linear infinite;
+    }
+</style>
