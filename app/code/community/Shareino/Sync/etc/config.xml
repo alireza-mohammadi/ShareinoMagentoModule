@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Shareino_Sync>
-            <version>1.2.3</version>
+            <version>1.0.0</version>
         </Shareino_Sync>
     </modules>
 
@@ -81,12 +81,12 @@
                 <sort_order>72</sort_order>
                 <children>
                     <config module="sync">
-                        <title>پیکربندی</title>
+                        <title>تنظیمات توکن</title>
                         <sort_order>0</sort_order>
                         <action>shareinoadmin/adminhtml_config</action>
                     </config>
                     <synced module="sync">
-                        <title>ارسال محصولات</title>
+                        <title>همسان سازی</title>
                         <sort_order>1</sort_order>
                         <action>shareinoadmin/adminhtml_synced</action>
                     </synced>
