@@ -27,8 +27,32 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         foreach ($ids as $id) {
             $products[] = Mage::helper('sync')->getProductById($id);
         }
-        $data = Mage::helper("sync")->sendRequset("products", json_encode($products), "POST");
-        $this->setResponse($data);
+
+        $results = Mage::helper("sync")->sendRequset("products", json_encode($products), "POST");
+
+        foreach ($results as $result) {
+            $shsync = Mage::getModel('sync/synced')
+                ->load($result['code'], 'product_id');
+
+            $data = array(
+                'product_id' => $result['code'],
+                'status' => $result['status'],
+                'errors' => !empty($result['errors']) ? implode(', ', $result['errors']) : ''
+            );
+
+            if ($shsync->isObjectNew()) {
+                $data ['date_add'] = date('Y-m-d H:i:s');
+                $shsync->setData($data)
+                    ->save();
+            } else {
+                $data ['date_upd'] = date('Y-m-d H:i:s');
+                $shsync->addData($data)
+                    ->setId($shsync['id_shareino_sync'])
+                    ->save();
+            }
+        }
+
+        $this->setResponse($results);
     }
 
     public function syncCategoryAction()

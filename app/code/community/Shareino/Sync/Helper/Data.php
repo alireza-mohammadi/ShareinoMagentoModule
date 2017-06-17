@@ -3,10 +3,10 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    //const SHAREINO_API_URL = "http://dev.scommerce.ir/api/v1/public/";
+    const SHAREINO_API_URL = "http://dev.scommerce.ir/api/v1/public/";
     //const SHAREINO_API_URL = "https://shareino.ir/api/v1/public/";
-    const SHAREINO_API_URL = "http://shareino.dev/api/v1/public/";
-    const Version = "1.2.3";
+    //const SHAREINO_API_URL = "http://shareino.dev/api/v1/public/";
+    const Version = "1.0.0";
 
     public function sendRequset($url, $body, $method)
     {
@@ -111,7 +111,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getProductById($productId)
     {
-        $product = Mage::getModel('catalog/product')->load($productId);
+        $product = Mage::getModel('catalog/product')
+            ->load($productId);
         return $this->getProductDetail($product);
     }
 
@@ -157,13 +158,17 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
-        //$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+        $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
 
-        $gallery_images = $product->getMediaGalleryImages();
-        $galleris = array();
-        foreach ($gallery_images->getItems() as $g_image) {
-            $galleris[] = $g_image['url'];
+        $images = $product->getMediaGalleryImages();
+        $productImages = array();
+        foreach ($images->getItems() as $image) {
+            if ($image['disabled']) {
+                continue;
+            }
+            $productImages[] = $image['url'];
         }
+
         $productDetail = array(
             'name' => $product->getName(),
             'code' => $product->getId(),
@@ -171,16 +176,18 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             'price' => $product->getPrice(),
             'active' => $product->getStatus(),
             'discount' => $this->getDiscounts($product),
-            'quantity' => '', //$stock->getQty() >= 0 ? $stock->getQty() : 0,
-            'weight' => $product->getWeight(),
-            'original_url' => $product->getProductUrl(),
+            'quantity' => $stock->getQty() >= 0 ? $stock->getQty() : 0,
+            'weight' => $product->getWeight() ? $product->getWeight() : 0,
+            'original_url' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getUrlPath(),
+            'original_url_1' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getProductUrl(),
+            'original_url_2' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getUrlInStore(),
             'brand_id' => '',
             'short_content' => $product->getShortDescription(),
             'long_content' => $product->getDescription(),
             'meta_keywords' => $product->getMetaKeyword(),
             'meta_description' => $product->getMetaDescription(),
             'image' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage(),
-            'images' => $galleris,
+            'images' => $productImages,
             'tags' => '',
             'variants' => $variations,
             'categories' => $this->getCategoryId($product->getId()),

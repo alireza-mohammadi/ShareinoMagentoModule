@@ -1,12 +1,8 @@
 <?php
 
-/**
- * Created by Saeed Darvish.
- * Email : sd.saeed.darvish@gmail.com
- * mobile : 09179960554
- */
 class Shareino_Sync_Block_Adminhtml_Synced extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
+
     public function __construct()
     {
         // The blockGroup must match the first half of how we call the block, and controller matches the second half
@@ -16,7 +12,6 @@ class Shareino_Sync_Block_Adminhtml_Synced extends Mage_Adminhtml_Block_Widget_G
         $this->_headerText = $this->__('Synchronization');
         parent::__construct();
         $this->_removeButton("add");
-
     }
 
     public function _prepareLayout()
@@ -33,4 +28,5 @@ class Shareino_Sync_Block_Adminhtml_Synced extends Mage_Adminhtml_Block_Widget_G
 
         return $this->getUrl("*/*/$op", array('id' => $this->getRequest()->getParam('id')));
     }
+
 }

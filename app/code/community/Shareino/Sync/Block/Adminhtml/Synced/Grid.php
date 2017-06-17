@@ -1,13 +1,7 @@
 <?php
 
-/**
- * Created by Saeed Darvish.
- * Email : sd.saeed.darvish@gmail.com
- * mobile : 09179960554
- */
 class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
-
 
     public function __construct()
     {
@@ -18,7 +12,6 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
         $this->setId('id_shareino_sync');
         $this->setDefaultDir('asc');
         $this->setSaveParametersInSession(true);
-        
     }
 
     protected function _getCollectionClass()
@@ -26,7 +19,6 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
         // This is the model we are using for the grid
         return 'sync/synced';
     }
-
 
     protected function _prepareCollection()
     {
@@ -41,40 +33,35 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
     protected function _prepareColumns()
     {
         // Add the columns that should appear in the grid
-        $this->addColumn('id_shareino_sync',
-            array(
-                'header' => $this->__('ID'),
-                'align' => 'right',
-                'width' => '50px',
-                'index' => 'id_shareino_sync'
+        $this->addColumn('id_shareino_sync', array(
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '50px',
+            'index' => 'id_shareino_sync'
             )
         );
 
-        $this->addColumn('product_id',
-            array(
-                'header' => $this->__('کد محصول'),
-                'index' => 'product_id',
-                'width' => '50px'
-
+        $this->addColumn('product_id', array(
+            'header' => $this->__('کد محصول'),
+            'index' => 'product_id',
+            'width' => '50px'
             )
         );
-        $this->addColumn('status',
-            array(
-                'header' => $this->__('وضعیت'),
-                'index' => 'status',
-                'width' => '50px'
-            )
-        );  $this->addColumn('errors',
-            array(
-                'header' => $this->__('پیغام ها'),
-                'index' => 'errors',
+        $this->addColumn('status', array(
+            'header' => $this->__('وضعیت'),
+            'index' => 'status',
+            'width' => '50px'
             )
         );
-        $this->addColumn('updated_at',
-            array(
-                'header' => $this->__('تاریخ بروز رسانی'),
-                'index' => 'updated_at',
-                'width' => '140px'
+        $this->addColumn('errors', array(
+            'header' => $this->__('پیغام ها'),
+            'index' => 'errors',
+            )
+        );
+        $this->addColumn('updated_at', array(
+            'header' => $this->__('تاریخ بروز رسانی'),
+            'index' => 'updated_at',
+            'width' => '140px'
             )
         );
 
@@ -86,4 +73,5 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
         // This is where our row data will link to
         return $this->getUrl('*/*/edit', array('id' => $row->getId()));
     }
+
 }

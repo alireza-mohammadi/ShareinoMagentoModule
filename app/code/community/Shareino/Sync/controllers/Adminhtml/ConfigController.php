@@ -36,23 +36,21 @@ class Shareino_Sync_Adminhtml_ConfigController extends Mage_Adminhtml_Controller
 
     public function syncAllAction()
     {
-        print_r('syncAll');
-        die('2');
         $allProduct = Mage::helper("sync")->getAllProducts();
 
-//        $collection = Mage::getModel('catalog/product')
-//            ->getCollection()
-//            ->addAttributeToSelect('entity_id')
-//            ->addAttributeToFilter('status', array('eq' => 1))
-//            ->load();
-//
-//        $products = array();
-//        foreach ($collection->getData() as $product) {
-//            $products[] = Mage::helper("sync")->getProductById($product["entity_id"]);
-//        }
-//
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToSelect('entity_id')
+            ->addAttributeToFilter('status', array('eq' => 1))
+            ->load();
+
+        $products = array();
+        foreach ($collection->getData() as $product) {
+            $products[] = Mage::helper("sync")->getProductById($product["entity_id"]);
+        }
+
         $chuck_products = array_chunk($allProduct, 200);
-//
+
         $sync_failures = array();
         $sync_success = array();
         $failure = "";

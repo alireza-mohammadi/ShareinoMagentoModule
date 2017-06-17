@@ -1,13 +1,7 @@
 <?php
 
-/**
- * Created by Saeed Darvish.
- * Email : sd.saeed.darvish@gmail.com
- * mobile : 09179960554
- */
 class Shareino_Sync_Block_Adminhtml_Organize_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
-
 
     public function __construct()
     {
@@ -26,7 +20,6 @@ class Shareino_Sync_Block_Adminhtml_Organize_Grid extends Mage_Adminhtml_Block_W
         return 'sync/organize';
     }
 
-
     protected function _prepareCollection()
     {
         // Get and set our collection for the grid
@@ -40,39 +33,34 @@ class Shareino_Sync_Block_Adminhtml_Organize_Grid extends Mage_Adminhtml_Block_W
     protected function _prepareColumns()
     {
         // Add the columns that should appear in the grid
-        $this->addColumn('id_shareino_organized',
-            array(
-                'header' => $this->__('ID'),
-                'align' => 'right',
-                'width' => '50px',
-                'index' => 'id_shareino_organized'
+        $this->addColumn('id_shareino_organized', array(
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '50px',
+            'index' => 'id_shareino_organized'
             )
         );
 
-        $this->addColumn('cat_id',
-            array(
-                'header' => $this->__('کد دسته بندی'),
-                'index' => 'cat_id',
-                'width' => '50px'
-
+        $this->addColumn('cat_id', array(
+            'header' => $this->__('کد دسته بندی'),
+            'index' => 'cat_id',
+            'width' => '50px'
             )
         );
-        $this->addColumn('name',
-            array(
-                'header' => $this->__('نام'),
-                'index' => 'name',
-            )
-        );  $this->addColumn('names',
-            array(
-                'header' => $this->__('نام معادل'),
-                'index' => 'names',
+        $this->addColumn('name', array(
+            'header' => $this->__('نام'),
+            'index' => 'name',
             )
         );
-        $this->addColumn('ids',
-            array(
-                'header' => $this->__('کد دسته های معادل'),
-                'index' => 'ids',
-                'width' => '50px'
+        $this->addColumn('names', array(
+            'header' => $this->__('نام معادل'),
+            'index' => 'names',
+            )
+        );
+        $this->addColumn('ids', array(
+            'header' => $this->__('کد دسته های معادل'),
+            'index' => 'ids',
+            'width' => '50px'
             )
         );
 
@@ -84,4 +72,5 @@ class Shareino_Sync_Block_Adminhtml_Organize_Grid extends Mage_Adminhtml_Block_W
         // This is where our row data will link to
         return $this->getUrl('*/*/edit', array('id' => $row->getId()));
     }
+
 }

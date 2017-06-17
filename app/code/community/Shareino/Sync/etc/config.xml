@@ -116,7 +116,7 @@
             </updates>
         </layout>
         <events>
-            <catalog_product_save_after><!-- observe the event -->
+            <catalog_product_save_after>
                 <observers>
                     <sync>
                         <class>sync/observer</class>
@@ -124,7 +124,7 @@
                     </sync>
                 </observers>
             </catalog_product_save_after>
-            <catalog_product_delete_after_done><!-- observe the event -->
+            <catalog_product_delete_after_done>
                 <observers>
                     <sync>
                         <class>sync/observer</class>
@@ -132,15 +132,6 @@
                     </sync>
                 </observers>
             </catalog_product_delete_after_done>
-
-            <!--<cataloginventory_stock_item_save_commit_after>&lt;!&ndash; observe the event &ndash;&gt;-->
-            <!--<observers>-->
-            <!--<sync>-->
-            <!--<class>sync/observer</class>-->
-            <!--<method>attr_quantity</method>-->
-            <!--</sync>-->
-            <!--</observers>-->
-            <!--</cataloginventory_stock_item_save_commit_after>-->
         </events>
     </adminhtml>
 </config>

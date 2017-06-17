@@ -2,22 +2,22 @@
 
 class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Block_Widget_Form
 {
+
     /**
      * Preparing form
      *
      * @return Mage_Adminhtml_Block_Widget_Form
      */
-
     protected function _prepareForm()
     {
         $id = $this->getRequest()->getParam("id");
         $organizeModel = Mage::getModel('sync/organize')->load($id);
 
         $form = new Varien_Data_Form(array(
-                'id' => 'edit_form',
-                'action' => $this->getUrl('*/*/save', array('id' => $this->getRequest()->getParam('id'))),
-                'method' => 'post',
-                'enctype' => 'multipart/form-data'
+            'id' => 'edit_form',
+            'action' => $this->getUrl('*/*/save', array('id' => $this->getRequest()->getParam('id'))),
+            'method' => 'post',
+            'enctype' => 'multipart/form-data'
             )
         );
         $fieldSet = $form->addFieldset('entity_form', array(
@@ -48,7 +48,6 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
         $this->setValues($form->getData());
         $form->setUseContainer(true);
         return parent::_prepareForm();
-
     }
 
     public function getLocalCategories()
@@ -86,6 +85,6 @@ class Shareino_Sync_Block_Adminhtml_Organize_Edit_Form extends Mage_Adminhtml_Bl
         $categories = $categories["categories"];
 //        $categories=str_replace("--",'',$categories);
         return $categories;
-
     }
+
 }
