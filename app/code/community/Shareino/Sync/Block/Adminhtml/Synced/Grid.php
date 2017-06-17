@@ -58,9 +58,9 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
             'index' => 'errors',
             )
         );
-        $this->addColumn('updated_at', array(
+        $this->addColumn('date_upd', array(
             'header' => $this->__('تاریخ بروز رسانی'),
-            'index' => 'updated_at',
+            'index' => 'date_upd',
             'width' => '140px'
             )
         );

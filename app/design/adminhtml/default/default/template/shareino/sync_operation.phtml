@@ -127,7 +127,7 @@
                     },
                     success: function(data) {
                         if (data.status === false) {
-                            messageText.html("توکن وارد شده صحیح نمیباشد.");
+                            messageText.html(data.data);
                             messageBox.show(500);
                             messageBox.addClass('alert-danger');
                         } else {

@@ -3,9 +3,9 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    const SHAREINO_API_URL = "http://dev.scommerce.ir/api/v1/public/";
+    //const SHAREINO_API_URL = "http://dev.scommerce.ir/api/v1/public/";
     //const SHAREINO_API_URL = "https://shareino.ir/api/v1/public/";
-    //const SHAREINO_API_URL = "http://shareino.dev/api/v1/public/";
+    const SHAREINO_API_URL = "http://shareino.dev/api/v1/public/";
     const Version = "1.0.0";
 
     public function sendRequset($url, $body, $method)
@@ -241,8 +241,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         if ($product->getSpecialPrice()) {
             $listDiscounts[] = array(
                 'amount' => $product->getPrice() - $product->getSpecialPrice(),
-                'start_date' => $product->getsPecialFromDate(),
-                'end_date' => $product->getSpecialToDate(),
+                'start_date' => $product->getsPecialFromDate() ? $product->getsPecialFromDate() : '0000-00-00 00:00:00',
+                'end_date' => $product->getSpecialToDate() ? $product->getSpecialToDate() : '0000-00-00 00:00:00',
                 'quantity' => 1,
                 'type' => 0
             );
