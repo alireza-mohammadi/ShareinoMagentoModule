@@ -46,59 +46,53 @@
     jQuery(function() {
         var messageBox = jQuery("#MessageBox");
         var messageText = jQuery("#MessageText");
-        var operation = null;
         var stop = false;
         // ارسال دسته بندی ها*
         jQuery('.sync-category').on('submit', function(e) {
             e.preventDefault();
             messageBox.hide();
-            operation = jQuery('.sync-category').attr("data-operation");
-            operation === "1" ? startSync('#state-btn-category', '#state-icon-category', '.sync-category') : stopSync('#state-btn-category', '#state-icon-category', '.sync-category');
-            if (stop) {
-                jQuery.ajax({
-                    type: 'GET',
-                    dataType: 'JSON',
-                    url: '<?php echo $this->getOperationAction("syncCategory"); ?>',
-                    data: {
-                        ajax: true,
-                        action: 'syncCategory',
-                        ids: 1
-                    },
-                    success: function(data, textStatus, jqXHR) {
-                        if (data.status === false) {
-                            messageText.html(data.message);
-                            messageBox.show(500);
-                            messageBox.addClass('alert-danger');
-                        }
-                        if (data.status === true) {
-                            messageText.html("دسته بندی ها شما با موفقیت به سایت شرینو ارسال شد.");
-                            messageBox.show(500);
-                            messageBox.addClass('alert-success');
-                            startSync('#state-btn-category', '#state-icon-category', '.sync-category');
-                        }
-                    },
-                    error: function(data) {
-                        messageText.html(data.responseText);
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction("syncCategory"); ?>',
+                data: {
+                    ajax: true,
+                    action: 'syncCategory',
+                    ids: 1
+                },
+                success: function(data, textStatus, jqXHR) {
+                    if (data.status === false) {
+                        messageText.html(data.message);
                         messageBox.show(500);
-                        messageBox.addClass("alert-danger");
+                        messageBox.addClass('alert-danger');
                     }
-                });
-            }
+                    if (data.status === true) {
+                        messageText.html("دسته بندی ها شما با موفقیت به سایت شرینو ارسال شد.");
+                        messageBox.show(500);
+                        messageBox.addClass('alert-success');
+                    }
+                },
+                error: function(data) {
+                    messageText.html(data.responseText);
+                    messageBox.show(500);
+                    messageBox.addClass("alert-danger");
+                }
+            });
         });
 
         // ارسال محصولات
         var productIDs = [<?php echo implode(',', Mage::registry('productIDs')); ?>];
         var lenght = productIDs.length;
+        var Orginallenght = productIDs.length;
         var progress = jQuery("#progress");
         var submitProgress = jQuery("#sync-progress");
         var progressText = jQuery("#progressText");
-        var chunk = 30;
+        var chunk = 10;
 
         jQuery('.sync-products').on('submit', function(e) {
             e.preventDefault();
             messageBox.hide();
             progress.show(500);
-            operation = jQuery('.sync-products').attr("data-operation");
             submitProgress.show();
             SyncProducts();
 
@@ -110,61 +104,44 @@
                 messageText.html("تمام محصولات شما با موفقیت به سایت شرینو ارسال شد.");
                 messageBox.show(500);
                 messageBox.addClass('alert-success');
-                startSync('#state-btn-product', '#state-icon-product', '.sync-products');
                 return;
             }
             var IDs = productIDs.splice(0, chunk);
-            operation === "1" ? startSync('#state-btn-product', '#state-icon-product', '.sync-products') : stopSync('#state-btn-product', '#state-icon-product', '.sync-products');
-            if (stop) {
-                jQuery.ajax({
-                    type: 'GET',
-                    dataType: 'JSON',
-                    url: '<?php echo $this->getOperationAction("syncProducts"); ?>',
-                    data: {
-                        ajax: true,
-                        action: 'syncProducts',
-                        ids: IDs
-                    },
-                    success: function(data) {
-                        if (data.status === false) {
-                            messageText.html(data.data);
-                            messageBox.show(500);
-                            messageBox.addClass('alert-danger');
-                        } else {
-                            setPercentage();
-                            SyncProducts();
-                        }
-                    },
-                    error: function(data) {
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction("syncProducts"); ?>',
+                data: {
+                    ajax: true,
+                    action: 'syncProducts',
+                    ids: IDs
+                },
+                success: function(data) {
+                    if (data.status === false) {
                         messageText.html(data.data);
                         messageBox.show(500);
-                        messageBox.addClass("alert-danger");
+                        messageBox.addClass('alert-danger');
+                    } else {
+                        setPercentage();
+                        SyncProducts();
                     }
-                });
-            }
+                },
+                error: function(data) {
+                    messageText.html(data.data);
+                    messageBox.show(500);
+                    messageBox.addClass("alert-danger");
+                }
+            });
         }
         function setPercentage() {
             var percentage = Math.round(((lenght - productIDs.length) * 100) / lenght);
             percentage = percentage > 100 ? 100 : percentage;
-            var text = " تعداد " + (lenght - productIDs.length) + " از " + lenght + " کالا ارسال شد.";
+            var text = " تعداد " + (lenght - productIDs.length) + " از " + Orginallenght + " کالا ارسال شد.";
             progressText.html(text);
             submitProgress
                     .css("width", percentage + "%")
                     .attr("aria-valuemin", percentage + "%")
                     .html(percentage + "%");
-        }
-        function stopSync(btn, i, form) {
-            jQuery(btn).addClass('btn-danger');
-            jQuery(i).removeClass('fa-send');
-            jQuery(i).addClass('fa-stop');
-            jQuery(form).attr("data-operation", "1");
-            stop = true;
-        }
-        function startSync(btn, i, form) {
-            jQuery(btn).removeClass('btn-danger');
-            jQuery(i).addClass('fa-send');
-            jQuery(form).attr("data-operation", "0");
-            stop = false;
         }
     });
 </script>
