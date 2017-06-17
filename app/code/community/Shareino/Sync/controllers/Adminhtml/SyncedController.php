@@ -28,7 +28,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
             $products[] = Mage::helper('sync')->getProductById($id);
         }
 
-        $results = Mage::helper("sync")->sendRequset("products", json_encode($products), "POST");
+        $results = Mage::helper('sync')->sendRequset('products', json_encode($products), 'POST');
 
         foreach ($results as $result) {
             $shsync = Mage::getModel('sync/synced')
@@ -82,7 +82,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
             }
         }
 
-        $data = Mage::helper("sync")->sendRequset("categories/sync", json_encode($listCategory), "POST");
+        $data = Mage::helper('sync')->sendRequset('categories/sync', json_encode($listCategory), 'POST');
         $this->setResponse($data);
     }
 

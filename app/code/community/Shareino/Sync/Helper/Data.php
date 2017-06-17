@@ -3,15 +3,14 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    //const SHAREINO_API_URL = "http://dev.scommerce.ir/api/v1/public/";
-    //const SHAREINO_API_URL = "https://shareino.ir/api/v1/public/";
-    const SHAREINO_API_URL = "http://shareino.dev/api/v1/public/";
-    const Version = "1.0.0";
+    //const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
+    const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
+    const Version = '1.0.0';
 
     public function sendRequset($url, $body, $method)
     {
         // Get api token from server
-        $SHAREINO_API_TOKEN = Mage::getStoreConfig("shareino/SHAREINO_API_TOKEN");
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig('shareino/SHAREINO_API_TOKEN');
         if ($SHAREINO_API_TOKEN) {
 
             // Init curl
@@ -36,7 +35,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             // Get result
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                 "Authorization:Bearer $SHAREINO_API_TOKEN",
-                "User-Agent: Magento_module_" . self::Version
+                'User-Agent: Magento_module_' . self::Version
                 )
             );
 
@@ -54,20 +53,21 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                 return array('status' => false, 'message' => 'خطا !لطفا صحت توکن را برسی کنید.');
             }
         }
-        return array('status' => false, 'message' => 'خطا!توکن وارد شده صحیح نمیباشد.');
+        return array('status' => false, 'message' => 'خطا! ارتباط با سرور با خطا مواجعه شده است.');
     }
 
     public function getAllProductIds()
     {
-        $ids = array();
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection();
 
-        $collection = Mage::getModel('catalog/product')->getCollection();
         $collection->addAttributeToFilter('status', 1);
-        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => "1")));
+        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
         $collection->addAttributeToFilter('entity_id', array('nin' => $this->getConfSimpleProduct()));
 
         $_productCollection = $collection->load();
 
+        $ids = array();
         foreach ($_productCollection as $product) {
             $ids[] = $product->getId();
         }
@@ -76,15 +76,15 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getConfigurableProduct()
     {
-        $ids = array();
-
-        $collection = Mage::getModel('catalog/product')->getCollection();
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection();
         $collection->addAttributeToFilter('type_id', 'configurable');
         $collection->addAttributeToFilter('status', 1);
-        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => "1")));
+        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
 
         $_productCollection = $collection->load();
 
+        $ids = array();
         foreach ($_productCollection as $product) {
             $ids[] = $product->getId();
         }
@@ -98,7 +98,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         $readConnection = $resource->getConnection('core_read');
 
         $query = 'SELECT child_id FROM ' . $resource->getTableName('catalog/product_relation')
-            . ' WHERE parent_id in ( ' . implode(" ,", $this->getConfigurableProduct()) . ');';
+            . ' WHERE parent_id in ( ' . implode(' ,', $this->getConfigurableProduct()) . ');';
 
         $results = $readConnection->fetchAll($query);
 
@@ -133,34 +133,36 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                 if ($children) {
                     $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($children);
                     $var = array(
-                        "code" => $child,
-                        "quantity" => $stock->getQty() >= 0 ? $stock->getQty() : 0,
-                        "sku" => $children->getData("sku"),
-                        "price" => $children->getData("price")
+                        'code' => $child,
+                        'quantity' => $stock->getQty() >= 0 ? $stock->getQty() : 0,
+                        'sku' => $children->getData('sku'),
+                        'price' => $children->getData('price')
                     );
 
                     $attribute = array();
                     foreach ($confAttrs as $conf) {
                         $value = $children->getResource()
-                            ->getAttribute($conf["attribute_code"])
+                            ->getAttribute($conf['attribute_code'])
                             ->getSource()
-                            ->getOptionText($children->getData($conf["attribute_code"]));
+                            ->getOptionText($children->getData($conf['attribute_code']));
 
-                        $attribute[$conf["attribute_code"]] = array(
-                            "label" => $conf["frontend_label"],
-                            "value" => $value
+                        $attribute[$conf['attribute_code']] = array(
+                            'label' => $conf['frontend_label'],
+                            'value' => $value
                         );
                     }
 
-                    $var["variation"] = $attribute;
+                    $var['variation'] = $attribute;
                     $variations[] = $var;
                 }
             }
         }
 
-        $stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+        $stock = Mage::getModel('cataloginventory/stock_item')
+            ->loadByProduct($product);
 
         $images = $product->getMediaGalleryImages();
+
         $productImages = array();
         foreach ($images->getItems() as $image) {
             if ($image['disabled']) {
@@ -217,18 +219,23 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                     ->getValue($orginalProductObjects)
             );
         }
-        $productDetail["attributes"] = $customAttributes;
+        $productDetail['attributes'] = $customAttributes;
 
         return $productDetail;
     }
 
     protected function getCategoryId($id)
     {
-        $product = Mage::getModel('catalog/product')->load($id);
+        $product = Mage::getModel('catalog/product')
+            ->load($id);
+
         $categories = $product->getCategoryIds();
+
         $listCategories = [];
         foreach ($categories as $category) {
-            $_cat = Mage::getModel('catalog/category')->load($category);
+            $_cat = Mage::getModel('catalog/category')
+                ->load($category);
+
             $listCategories [] = $_cat->getId();
         }
         return $listCategories;

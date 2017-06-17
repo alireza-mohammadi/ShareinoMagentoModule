@@ -42,9 +42,11 @@ class Shareino_Sync_Model_Observer
         $product = $observer->getEvent()->getProduct();
         $productId = $product->getData('entity_id');
 
-        $url = 'products';
-        $body = array('type' => 'selected', 'code' => array($productId));
-        $result = Mage::helper('sync')->sendRequset($url, json_encode($body), 'DELETE');
+        $body = array(
+            'type' => 'selected',
+            'code' => array($productId)
+        );
+        Mage::helper('sync')->sendRequset('products', json_encode($body), 'DELETE');
     }
 
 }

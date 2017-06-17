@@ -11,7 +11,7 @@ class Shareino_Sync_Block_Adminhtml_Synced extends Mage_Adminhtml_Block_Widget_G
         $this->_controller = 'adminhtml_Synced';
         $this->_headerText = $this->__('Synchronization');
         parent::__construct();
-        $this->_removeButton("add");
+        $this->_removeButton('add');
     }
 
     public function _prepareLayout()
