@@ -7,32 +7,21 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
     {
         parent::__construct();
 
-        // Set some defaults for our grid
         $this->setDefaultSort('id_shareino_sync');
         $this->setId('id_shareino_sync');
-        $this->setDefaultDir('asc');
+        $this->setDefaultDir('ASC'); //DESC
         $this->setSaveParametersInSession(true);
-    }
-
-    protected function _getCollectionClass()
-    {
-        // This is the model we are using for the grid
-        return 'sync/synced';
     }
 
     protected function _prepareCollection()
     {
-        // Get and set our collection for the grid
-//        $collection = Mage::getResourceModel($this->_getCollectionClass())->load();;
-        $collection = Mage::getModel($this->_getCollectionClass())->getCollection()->load();
+        $collection = Mage::getModel('sync/synced')->getCollection();
         $this->setCollection($collection);
-
         return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
     {
-        // Add the columns that should appear in the grid
         $this->addColumn('id_shareino_sync', array(
             'header' => $this->__('ID'),
             'align' => 'right',
@@ -58,6 +47,12 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
             'index' => 'errors',
             )
         );
+        $this->addColumn('date_add', array(
+            'header' => $this->__('تاریخ  درج'),
+            'index' => 'date_upd',
+            'width' => '140px'
+            )
+        );
         $this->addColumn('date_upd', array(
             'header' => $this->__('تاریخ بروز رسانی'),
             'index' => 'date_upd',
@@ -70,7 +65,6 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
 
     public function getRowUrl($row)
     {
-        // This is where our row data will link to
         return $this->getUrl('*/*/edit', array('id' => $row->getId()));
     }
 

@@ -7,26 +7,6 @@
         </reference>
     </sync_adminhtml_config_index>
 
-    <sync_adminhtml_organize_index>
-        <reference name="content">
-            <block type="sync/adminhtml_organize" name="adminorganize"/>
-        </reference>
-    </sync_adminhtml_organize_index>
-
-    <sync_adminhtml_organize_new>
-        <update handle="editor"/>
-        <reference name="content">
-            <block type="sync/adminhtml_organize_edit" name="adminorganize"/>
-        </reference>
-    </sync_adminhtml_organize_new>
-
-    <sync_adminhtml_organize_edit>
-        <update handle="editor"/>
-        <reference name="content">
-            <block type="sync/adminhtml_organize_edit" name="adminorganize"/>
-        </reference>
-    </sync_adminhtml_organize_edit>
-
     <sync_adminhtml_synced_index>
         <reference name="content">
             <block type="sync/adminhtml_synced" name="adminsync" template="shareino/sync_operation.phtml"/>

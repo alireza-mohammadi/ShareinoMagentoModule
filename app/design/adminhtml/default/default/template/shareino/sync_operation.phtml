@@ -119,7 +119,7 @@
                 },
                 success: function(data) {
                     if (data.status === false) {
-                        messageText.html(data.data);
+                        messageText.html(data.message);
                         messageBox.show(500);
                         messageBox.addClass('alert-danger');
                     } else {
@@ -128,7 +128,7 @@
                     }
                 },
                 error: function(data) {
-                    messageText.html(data.data);
+                    messageText.html(data.message);
                     messageBox.show(500);
                     messageBox.addClass("alert-danger");
                 }
