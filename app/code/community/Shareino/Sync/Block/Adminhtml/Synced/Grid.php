@@ -49,7 +49,7 @@ class Shareino_Sync_Block_Adminhtml_Synced_Grid extends Mage_Adminhtml_Block_Wid
         );
         $this->addColumn('date_add', array(
             'header' => $this->__('تاریخ  درج'),
-            'index' => 'date_upd',
+            'index' => 'date_add',
             'width' => '140px'
             )
         );
