@@ -3,8 +3,7 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    //const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
-    const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
+    const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
     const Version = '1.0.0';
 
     public function sendRequset($url, $body, $method)
@@ -18,8 +17,9 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
             // SSL check
-            //curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            //curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+
             // Generate url and set method in url
             $url = self::SHAREINO_API_URL . $url;
             curl_setopt($curl, CURLOPT_URL, $url);
