@@ -88,7 +88,7 @@
         var progress = jQuery("#progress");
         var submitProgress = jQuery("#sync-progress");
         var progressText = jQuery("#progressText");
-        var chunk = 10;
+        var chunk = 50;
 
         jQuery('.sync-products').on('submit', function(e) {
             e.preventDefault();
@@ -137,7 +137,7 @@
         function setPercentage() {
             var percentage = Math.round(((lenght - productIDs.length) * 100) / lenght);
             percentage = percentage > 100 ? 100 : percentage;
-            var text = " تعداد " + (lenght - productIDs.length) + " از " + Orginallenght + " کالا ارسال شد.";
+            var text = " تعداد " + (Orginallenght - productIDs.length) + " از " + Orginallenght + " کالا ارسال شد.";
             progressText.html(text);
             submitProgress
                     .css("width", percentage + "%")

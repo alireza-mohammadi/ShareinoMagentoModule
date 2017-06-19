@@ -3,7 +3,7 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
+    const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
     const Version = '1.0.0';
 
     public function sendRequset($url, $body, $method)
@@ -17,9 +17,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
             // SSL check
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-
+            //curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            //curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
             // Generate url and set method in url
             $url = self::SHAREINO_API_URL . $url;
             curl_setopt($curl, CURLOPT_URL, $url);
@@ -45,15 +44,21 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             // Get Header Response header
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
-            if ($httpcode === 200) {
-                return json_decode($result, true);
-            }
 
-            if ($httpcode == 401 || $httpcode == 403) {
-                return array('status' => false, 'message' => 'خطا !لطفا صحت توکن را برسی کنید.');
+            switch ($httpcode) {
+                case 200:
+                    return json_decode($result, true);
+                case 401:
+                    return array('status' => false, 'message' => 'خطا! توکن وارد شده معتبر نمیباشد.');
+                case 403:
+                    return array('status' => false, 'message' => 'خطا! دسترسی  مجاز نمیباشد.');
+                case 408:
+                    return array('status' => false, 'message' => 'خطا! درخواست منقضی شد.');
+                default:
+                    return array('status' => false, 'message' => 'Error : ' . $httpcode);
             }
         }
-        return array('status' => false, 'message' => 'خطا! ارتباط با سرور با خطا مواجعه شده است.');
+        return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید');
     }
 
     public function getAllProductIds()
@@ -118,11 +123,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getProductDetail($product)
     {
-        $orginalProductObjects = $product;
-        $attributeProducts = $product->getData();
-
         $variations = array();
-
         if ($product->isConfigurable()) {
             $configurableProduct = $product->getTypeInstance(true);
             $confAttrs = $configurableProduct->getConfigurableAttributesAsArray($product);
@@ -183,43 +184,20 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             'original_url' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getUrlPath(),
             'original_url_1' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getProductUrl(),
             'original_url_2' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getUrlInStore(),
-            'brand_id' => '',
+            'brand_id' => "",
             'short_content' => $product->getShortDescription(),
             'long_content' => $product->getDescription(),
             'meta_keywords' => $product->getMetaKeyword(),
             'meta_description' => $product->getMetaDescription(),
             'image' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage(),
             'images' => $productImages,
-            'tags' => '',
+            'tags' => "",
             'variants' => $variations,
             'categories' => $this->getCategoryId($product->getId()),
             'available_for_order' => 1,
             'out_of_stock' => 0,
+            'attributes' => $this->getAttributesProduct($product)
         );
-
-        foreach ($this->attributeLists() as $attributeList) {
-            unset($attributeProducts[$attributeList]);
-        }
-
-        $customAttributes = array();
-
-        foreach ($attributeProducts as $key => $attributeProduct) {
-            if ($orginalProductObjects->getResource()->getAttribute($key)->getFrontend()->getValue($orginalProductObjects) === null) {
-                continue;
-            }
-            $customAttributes[$key] = array(
-                'label' => $orginalProductObjects->getResource()
-                    ->getAttribute($key)
-                    ->getFrontend()
-                    ->getLabel($orginalProductObjects)
-                ,
-                'value' => $orginalProductObjects->getResource()
-                    ->getAttribute($key)
-                    ->getFrontend()
-                    ->getValue($orginalProductObjects)
-            );
-        }
-        $productDetail['attributes'] = $customAttributes;
 
         return $productDetail;
     }
@@ -271,65 +249,20 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         return $listDiscounts;
     }
 
-    protected function attributeLists()
+    protected function getAttributesProduct($product)
     {
-        return array(
-            'recurring_profile',
-            'entity_id',
-            'entity_type_id',
-            'attribute_set_id',
-            'type_id',
-            'sku',
-            'has_options',
-            'required_options',
-            'created_at',
-            'updated_at',
-            'name',
-            'url_key',
-            'msrp_enabled',
-            'msrp_display_actual_price_type',
-            'meta_title',
-            'meta_description',
-            'image',
-            'small_image',
-            'thumbnail',
-            'custom_design',
-            'page_layout',
-            'options_container',
-            'gift_message_available',
-            'url_path',
-            'weight',
-            'price',
-            'special_price',
-            'msrp',
-            'status',
-            'visibility',
-            'tax_class_id',
-            'is_recurring',
-            'description',
-            'short_description',
-            'meta_keyword',
-            'custom_layout_update',
-            'news_from_date',
-            'news_to_date',
-            'special_from_date',
-            'special_to_date',
-            'custom_design_from',
-            'custom_design_to',
-            'group_price',
-            'group_price_changed',
-            'media_gallery',
-            'tier_price',
-            'tier_price_changed',
-            'stock_item',
-            'is_in_stock',
-            'is_salable',
-            'meta_keywords',
-            'meta_description',
-            'image_label',
-            'thumbnail_label',
-            'small_image_label'
-        );
+        $data = array();
+        $attributes = $product->getAttributes();
+        foreach ($attributes as $attribute) {
+            if ($attribute->getIsVisibleOnFront() && !in_array($attribute->getAttributeCode())) {
+                $data [] = array(
+                    'label' => $attribute->getStoreLabel(),
+                    'value' => $attribute->getFrontend()->getValue($product),
+                );
+            }
+        }
+
+        return $data;
     }
 
 }

@@ -57,28 +57,25 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     public function syncCategoryAction()
     {
-        $category = Mage::getModel('catalog/category');
-        $tree = $category->getTreeModel();
-        $tree->load();
+        $ids = Mage::getModel('catalog/category')
+            ->getTreeModel()
+            ->load()
+            ->getCollection()
+            ->getAllIds();
 
-        $ids = $tree->getCollection()->getAllIds();
-
-        $listCategory = [];
+        $listCategory = array();
         if ($ids) {
             foreach ($ids as $id) {
-                $category->load($id);
-                $subcategories = $category->getChildrenCategories();
+                $subcategories = Mage::getModel('catalog/category')
+                    ->load($id);
 
-                $parent_id = 0;
-                foreach ($subcategories as $subcategory) {
-                    $parent_id = $subcategory->getId();
+                if ($subcategories->is_active) {
+                    $listCategory[] = [
+                        'id' => $subcategories->getId(),
+                        'parent_id' => $subcategories->getParentId(),
+                        'name' => $subcategories->getName()
+                    ];
                 }
-
-                $listCategory[] = [
-                    'id' => $category->getId(),
-                    'parent_id' => $parent_id,
-                    'name' => $category->getName()
-                ];
             }
         }
 
