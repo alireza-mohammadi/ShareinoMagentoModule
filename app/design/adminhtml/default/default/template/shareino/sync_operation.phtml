@@ -26,21 +26,47 @@
 <div class="clear"></div>
 <div class="entry-edit">
     <div class="entry-edit-head">
-        <h4 class="icon-head head-edit-form fieldset-legend">
-            مدیریت ارسال محصولات به            <a href="http://shareino.ir" target="_blank">شرینو</a></h4>
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">۱ : تنظیمات توکن</h4>
     </div>
-    <div class="fieldset" id="entity_form">
+    <div class="fieldset" id="entity_form" dir="rtl">
         <div class="hor-scroll">
-            <form class="sync-products" action="<?php echo $this->getOperationAction("syncProducts"); ?>">
-                <button type="submit" class="scalable save" style="height: 22px">ارسال محصولات</button>
-            </form>
-            <form class="sync-category" action="<?php echo $this->getOperationAction("syncCategory"); ?>">
-                <button type="submit" class="scalable save" style="height: 22px">ارسال دسته بندی ها</button>
-            </form>
+            <div class="main-div">
+                <a class="button form-button scalable save" href="<?php echo Mage::helper("adminhtml")->getUrl("shareinoadmin/adminhtml_config/index") ?>" style="text-decoration: none">تنظیمات توکن</a>
+                <p> ابتدا طبق <a href="https://shareino.ir/files/lab/magento/shareino-magento-doc.pdf">راهنمای پلاگین</a>, توکن دریافتی را در تنظیمات پلاگین ذخیره کنید.</p>
+            </div>
         </div>
     </div>
 </div>
-
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">۲ : ارسال دسته بندی ها</h4>
+    </div>
+    <div class="fieldset" id="entity_form" dir="rtl">
+        <div class="hor-scroll">
+            <div class="main-div">
+                <form class="sync-category" action="<?php echo $this->getOperationAction("syncCategory"); ?>">
+                    <button type="submit" class="scalable save" style="height: 22px">ارسال دسته بندی ها</button>
+                </form>
+                <p>قبل از ارسال محصولات به شرینو, لازم است ابتدا دسته بندی های خود را ارسال کنید.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">۳ : ارسال کالاها</h4>
+    </div>
+    <div class="fieldset" id="entity_form" dir="rtl">
+        <div class="hor-scroll">
+            <div class="main-div">
+                <form class="sync-products" action="<?php echo $this->getOperationAction("syncProducts"); ?>">
+                    <button type="submit" class="scalable save" style="height: 22px">ارسال محصولات</button>
+                </form>
+                <p>در این قسمت میتوانید محصولات خود را به شرینو ارسال کنید.</p>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script>
     jQuery.noConflict();
@@ -163,6 +189,15 @@
     }
     ul{
         padding:0;
+    }
+    .main-div{
+    }
+    .main-div p{
+        font-size: 14px;
+    }
+    .main-div h2{
+        font-weight:bolder;
+        text-align:right;
     }
     .fade.in {
         opacity: 1;

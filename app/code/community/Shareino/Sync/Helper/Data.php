@@ -3,8 +3,8 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    //const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
-    const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
+    const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
+    //const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
     const Version = '1.0.1';
 
     public function sendRequset($url, $body, $method)
