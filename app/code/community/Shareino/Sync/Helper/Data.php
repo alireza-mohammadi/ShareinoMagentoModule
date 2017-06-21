@@ -5,7 +5,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
     //const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
-    const Version = '1.0.1';
+    const Version = '1.0.3';
 
     public function sendRequset($url, $body, $method)
     {
@@ -56,8 +56,10 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                     return array('status' => false, 'message' => 'خطا! دسترسی  مجاز نمیباشد.');
                 case 408:
                     return array('status' => false, 'message' => 'خطا! درخواست منقضی شد.');
+                case 429:
+                    return array('status' => false, 'message' => '429');
                 default:
-                    return array('status' => false, 'message' => 'Error : ' . $httpcode);
+                    return array('status' => false, 'message' => $httpcode);
             }
         }
         return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید');

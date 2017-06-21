@@ -73,8 +73,7 @@
     jQuery(function() {
         var messageBox = jQuery("#MessageBox");
         var messageText = jQuery("#MessageText");
-        var stop = false;
-        // ارسال دسته بندی ها*
+
         jQuery('.sync-category').on('submit', function(e) {
             e.preventDefault();
             messageBox.hide();
@@ -107,33 +106,30 @@
             });
         });
 
-        // ارسال محصولات
-        var productIDs = [<?php echo implode(',', Mage::registry('productIDs')); ?>];
-        var lenght = productIDs.length;
-        var Orginallenght = productIDs.length;
+        var split = 50;
+        var pageNumber = 0;
+        var countProduct = <?php echo Mage::registry('countProduct'); ?>;
+        var pageCount = Math.ceil(countProduct / split);
         var progress = jQuery("#progress");
         var submitProgress = jQuery("#sync-progress");
-        var progressText = jQuery("#progressText");
-        var chunk = 50;
-
         jQuery('.sync-products').on('submit', function(e) {
             e.preventDefault();
             messageBox.hide();
             progress.show(500);
             submitProgress.show();
+            setPercentage();
             SyncProducts();
-
-            lenght = productIDs.length;
         });
 
         function SyncProducts() {
-            if (productIDs.length <= 0) {
-                messageText.html("تمام محصولات شما با موفقیت به سایت شرینو ارسال شد.");
-                messageBox.show(500);
+            if (pageNumber === pageCount) {
+                messageText.html('تمام محصولات شما با موفقیت به سایت شرینو ارسال شد.');
+                messageBox.removeClass('alert-warning');
+                messageBox.removeClass('alert-danger');
                 messageBox.addClass('alert-success');
+                messageBox.show(500);
                 return;
             }
-            var IDs = productIDs.splice(0, chunk);
             jQuery.ajax({
                 type: 'GET',
                 dataType: 'JSON',
@@ -141,14 +137,22 @@
                 data: {
                     ajax: true,
                     action: 'syncProducts',
-                    ids: IDs
+                    pageNumber: pageNumber
                 },
                 success: function(data) {
                     if (data.status === false) {
-                        messageText.html(data.message);
-                        messageBox.show(500);
-                        messageBox.addClass('alert-danger');
+                        if (data.message === '429') {
+                            messageText.html('فرایند ارسال محصولات زمانی به طول می انجامد لطفا صبور باشید.');
+                            messageBox.addClass('alert-warning');
+                            messageBox.show(500);
+                            setTimeout(SyncProducts(), 61 * 1000);
+                        } else {
+                            messageText.html(data.message);
+                            messageBox.show(500);
+                            messageBox.addClass('alert-danger');
+                        }
                     } else {
+                        pageNumber++;
                         setPercentage();
                         SyncProducts();
                     }
@@ -161,10 +165,8 @@
             });
         }
         function setPercentage() {
-            var percentage = Math.round(((lenght - productIDs.length) * 100) / lenght);
+            var percentage = Math.round((100 * (pageNumber * split)) / countProduct);
             percentage = percentage > 100 ? 100 : percentage;
-            var text = " تعداد " + (Orginallenght - productIDs.length) + " از " + Orginallenght + " کالا ارسال شد.";
-            progressText.html(text);
             submitProgress
                     .css("width", percentage + "%")
                     .attr("aria-valuemin", percentage + "%")
@@ -220,7 +222,16 @@
         background-color: #f2dede;
         border-color: #ebccd1;
     }
-
+    .alert-warning {
+        background-color: #fcf8e3;
+        border-color: #faf2cc;
+        color: #8a6d3b;
+    }
+    .alert-info {
+        background-color: #d9edf7;
+        border-color: #bcdff1;
+        color: #31708f;
+    }
     .fade {
         opacity: 0;
         -webkit-transition: opacity .15s linear;

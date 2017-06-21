@@ -15,16 +15,17 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         $this->_setActiveMenu('sharein_tab/');
         $this->_addContent($this->getLayout()->createBlock('sync/adminhtml_synced'));
         $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Synchronization'));
-        Mage::register('productIDs', Mage::helper('sync')->getAllProductIds());
+        Mage::register('countProduct', count(Mage::helper('sync')->getAllProductIds()));
         $this->renderLayout();
     }
 
     public function syncProductsAction()
     {
-        $ids = $this->getRequest()->getParam('ids');
+        $page = $this->getRequest()->getParam('pageNumber');
+        $ids = array_chunk(Mage::helper('sync')->getAllProductIds(), 50);
 
         $products = array();
-        foreach ($ids as $id) {
+        foreach ($ids[$page] as $id) {
             $products[] = Mage::helper('sync')->getProductById($id);
         }
 
