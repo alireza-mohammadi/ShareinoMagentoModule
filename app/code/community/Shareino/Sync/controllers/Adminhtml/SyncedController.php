@@ -22,11 +22,15 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
     public function syncProductsAction()
     {
         $page = $this->getRequest()->getParam('pageNumber');
-        $ids = array_chunk(Mage::helper('sync')->getAllProductIds(), 50);
+
+        $ids = Mage::getModel('catalog/product')->getCollection();
+        $ids->setPage($page, 50);
+        $ids->addAttributeToFilter('status', 1)
+            ->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
 
         $products = array();
-        foreach ($ids[$page] as $id) {
-            $products[] = Mage::helper('sync')->getProductById($id);
+        foreach ($ids as $id) {
+            $products[] = Mage::helper('sync')->getProductById($id->getId());
         }
 
         $results = Mage::helper('sync')->sendRequset('products', json_encode($products), 'POST');

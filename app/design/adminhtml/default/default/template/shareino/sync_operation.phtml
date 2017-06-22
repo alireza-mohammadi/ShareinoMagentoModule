@@ -107,7 +107,7 @@
         });
 
         var split = 50;
-        var pageNumber = 0;
+        var pageNumber = 1;
         var countProduct = <?php echo Mage::registry('countProduct'); ?>;
         var pageCount = Math.ceil(countProduct / split);
         var progress = jQuery("#progress");
@@ -117,12 +117,11 @@
             messageBox.hide();
             progress.show(500);
             submitProgress.show();
-            setPercentage();
             SyncProducts();
         });
 
         function SyncProducts() {
-            if (pageNumber === pageCount) {
+            if (pageNumber > pageCount) {
                 messageText.html('تمام محصولات شما با موفقیت به سایت شرینو ارسال شد.');
                 messageBox.removeClass('alert-warning');
                 messageBox.removeClass('alert-danger');
@@ -145,15 +144,15 @@
                             messageText.html('فرایند ارسال محصولات زمانی به طول می انجامد لطفا صبور باشید.');
                             messageBox.addClass('alert-warning');
                             messageBox.show(500);
-                            setTimeout(SyncProducts(), 61 * 1000);
+                            setTimeout(SyncProducts, 61 * 1000);
                         } else {
                             messageText.html(data.message);
                             messageBox.show(500);
                             messageBox.addClass('alert-danger');
                         }
                     } else {
-                        pageNumber++;
                         setPercentage();
+                        pageNumber++;
                         SyncProducts();
                     }
                 },
