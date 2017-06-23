@@ -57,7 +57,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                 case 408:
                     return array('status' => false, 'message' => 'خطا! درخواست منقضی شد.');
                 case 429:
-                    return array('status' => false, 'message' => '429');
+                    return array('status' => false, 'code' => 429, 'message' => 'فرایند ارسال محصولات به طول می انجامد لطفا صبور باشید.');
                 default:
                     return array('status' => false, 'message' => $httpcode);
             }

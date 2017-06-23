@@ -140,8 +140,8 @@
                 },
                 success: function(data) {
                     if (data.status === false) {
-                        if (data.message === '429') {
-                            messageText.html('فرایند ارسال محصولات زمانی به طول می انجامد لطفا صبور باشید.');
+                        if (data.code === 429) {
+                            messageText.html(data.message);
                             messageBox.addClass('alert-warning');
                             messageBox.show(500);
                             setTimeout(SyncProducts, 61 * 1000);
