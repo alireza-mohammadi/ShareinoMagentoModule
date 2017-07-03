@@ -258,12 +258,13 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         $data = array();
         $attributes = $product->getAttributes();
         foreach ($attributes as $attribute) {
-            if ($attribute->getIsVisibleOnFront()) {
-                $data [] = array(
-                    'label' => $attribute->getStoreLabel(),
-                    'value' => $attribute->getFrontend()->getValue($product),
-                );
+            if (!$attribute->getIsVisibleOnFront() || $product->getData($attribute->getName()) === null) {
+                continue;
             }
+            $data [] = array(
+                'label' => $attribute->getStoreLabel(),
+                'value' => $attribute->getFrontend()->getValue($product),
+            );
         }
 
         return $data;
