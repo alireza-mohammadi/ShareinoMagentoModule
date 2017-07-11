@@ -1,0 +1,233 @@
+<div class="alert fade in" id="MessageBox" hidden>
+    <p id="MessageText"></p>
+</div>
+<div class="clear"></div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">۱ : ذخیره توکن دریافتی از شرینو</h4>
+    </div>
+    <div class="fieldset" id="entity_form" dir="rtl">
+        <div class="hor-scroll">
+            <div class="main-div">
+                <form class="save-token" action="<?php echo $this->getOperationAction('saveToken'); ?>">
+                    <table cellspacing="0" class="form-list">
+                        <tbody>
+                            <tr>
+                                <td class="label">
+                                    <label for="token">توکن دریافتی از شرینو : <span class="required">*</span></label>
+                                </td>
+                                <td class="value">
+                                    <input id="token" name="token" value="<?php echo Mage::registry('token'); ?>" class="required-entry input-text required-entry" type="text">
+                                    <button type="submit" class="scalable save" style="height: 22px">ذخیره توکن</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <p>توکن دریافتی خود از شرینو را در اینجا وارد کنید.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">۱ : ذخیره توکن دریافتی از شرینو</h4>
+    </div>
+    <div class="fieldset" id="entity_form" dir="rtl">
+        <div class="hor-scroll">
+            <div class="main-div">
+                <form class="save-type" action="<?php echo $this->getOperationAction('saveType'); ?>">
+                    <table cellspacing="0" class="form-list">
+                        <tbody>
+                            <tr>
+                                <td class="label">
+                                    <label for="send-type">نوع ارسال :</label>
+                                </td>
+                                <td class="value">
+                                    <select id="send-type">
+                                        <option value="0">همه موارد</option>
+                                        <option value="1">دسته بندی ها</option>
+                                        <option value="2">کالاها</option>
+                                    </select>
+                                    <button type="submit" class="scalable save" style="height: 22px">ذخیره نوع ارسال</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <p>نوع ارسال خود به شرینو را انتخاب کنید.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">۲ : ارسال دسته بندی ها</h4>
+    </div>
+    <div class="fieldset" id="entity_form" dir="rtl">
+        <div class="hor-scroll">
+            <div class="main-div">
+                <form class="save-category" action="<?php echo $this->getOperationAction('saveCategory'); ?>">
+                    <div class="shareino-tree">
+                        <?php echo Mage::registry('categories'); ?>
+                    </div>
+                    <button type="submit" class="scalable save" style="height: 22px">دسته بندی</button>
+                </form>
+                <p>لیست دسته بندی هایی که میخواهید به شرینو ارسال شود را انتخاب کنید.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+    jQuery.noConflict();
+    jQuery(function() {
+        var messageBox = jQuery("#MessageBox");
+        var messageText = jQuery("#MessageText");
+
+        jQuery(function() {
+            jQuery(".shareino-tree .collapse").on("click", function(e) {
+                jQuery(this).parent().toggleClass("open");
+            });
+        });
+
+        jQuery('.save-category').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+
+            var categories = [];
+            jQuery('input[type=checkbox]:checked').each(function(i) {
+                categories[i] = jQuery(this).val();
+            });
+
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction('saveCategory'); ?>',
+                data: {
+                    ajax: true,
+                    action: 'saveCategory',
+                    categories: categories
+                },
+                success: function(data, textStatus, jqXHR) {
+                    message(data.status, data.message);
+                },
+                error: function(data) {
+                    message(false, data.message);
+                }
+            });
+        });
+
+        jQuery('.save-token').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction('saveToken'); ?>',
+                data: {
+                    ajax: true,
+                    action: 'saveToken',
+                    token: jQuery('#token').val()
+                },
+                success: function(data, textStatus, jqXHR) {
+                    message(data.status, data.message);
+                },
+                error: function(data) {
+                    message(false, data.message);
+                }
+            });
+        });
+
+        jQuery('.save-type').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction('saveType'); ?>',
+                data: {
+                    ajax: true,
+                    action: 'saveType',
+                    type: jQuery('#send-type').val()
+                },
+                success: function(data, textStatus, jqXHR) {
+                    message(data.status, data.message);
+                },
+                error: function(data) {
+                    message(false, data.message);
+                }
+            });
+        });
+
+        function message(status, message) {
+            messageText.html(message);
+            messageBox.show(500);
+            messageBox.addClass(status ? 'alert-success' : 'alert-danger');
+        }
+    });
+</script>
+<style>
+    .shareino-tree ul {
+        list-style: cross-fade;
+        display: none;
+        margin-bottom: 15px;
+    }
+    .shareino-tree > ul {
+        padding-right: 5px;
+        display: block;
+    }
+    .shareino-tree ul li i {
+        font-size: 14px;
+        margin: 0 4px;
+        cursor: pointer;
+    }
+    .shareino-tree li > i:before {
+        content: '+';
+    }
+    .shareino-tree li.open > i:before {
+        content: '-';
+    }
+    .shareino-tree li.open > ul {
+        display: block;
+    }
+    .fade.in {
+        opacity: 1;
+    }
+    .alert {
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        direction: rtl;
+        font-size: 14px;
+    }
+    .alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+    .alert-danger {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+    }
+    .alert-warning {
+        background-color: #fcf8e3;
+        border-color: #faf2cc;
+        color: #8a6d3b;
+    }
+    .alert-info {
+        background-color: #d9edf7;
+        border-color: #bcdff1;
+        color: #31708f;
+    }
+    .fade {
+        opacity: 0;
+        -webkit-transition: opacity .15s linear;
+        -o-transition: opacity .15s linear;
+        transition: opacity .15s linear;
+    }
+</style>
