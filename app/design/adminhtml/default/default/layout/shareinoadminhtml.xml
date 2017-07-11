@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<layout version="1.0.4">
+<layout version="1.1.0">
     <sync_adminhtml_config_index>
         <update handle="editor"/>
         <reference name="content">
@@ -12,4 +12,10 @@
             <block type="sync/adminhtml_synced" name="adminsync" template="shareino/sync_operation.phtml"/>
         </reference>
     </sync_adminhtml_synced_index>
+
+    <sync_adminhtml_configured_index>
+        <reference name="content">
+            <block type="sync/adminhtml_synced" name="adminsync" template="shareino/configured.phtml"/>
+        </reference>
+    </sync_adminhtml_configured_index>
 </layout>

@@ -2,10 +2,9 @@
 <config>
     <modules>
         <Shareino_Sync>
-            <version>1.0.4</version>
+            <version>1.1.0</version>
         </Shareino_Sync>
     </modules>
-
     <global>
         <models>
             <sync>
@@ -21,6 +20,9 @@
                     <synced>
                         <table>shareino_sync</table>
                     </synced>
+                    <configured>
+                        <table>shareino_configured</table>
+                    </configured>
                 </entities>
             </sync_resource>
         </models>
@@ -61,7 +63,6 @@
             </updates>
         </layout>
     </frontend>
-
     <admin>
         <routers>
             <sync>
@@ -73,21 +74,20 @@
             </sync>
         </routers>
     </admin>
-
     <adminhtml>
         <menu>
             <sharein_tab module="sync">
                 <title>ShareINO</title>
                 <sort_order>72</sort_order>
                 <children>
-                    <config module="sync">
-                        <title>تنظیمات توکن</title>
-                        <sort_order>0</sort_order>
-                        <action>shareinoadmin/adminhtml_config</action>
-                    </config>
-                    <synced module="sync">
-                        <title>همسان سازی</title>
+                    <configured module="sync">
+                        <title>پیگربندی</title>
                         <sort_order>1</sort_order>
+                        <action>shareinoadmin/adminhtml_configured</action>
+                    </configured>
+                    <synced module="sync">
+                        <title>ارسال محصولات</title>
+                        <sort_order>2</sort_order>
                         <action>shareinoadmin/adminhtml_synced</action>
                     </synced>
                 </children>
