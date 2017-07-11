@@ -65,6 +65,17 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید');
     }
 
+    public function getCount()
+    {
+        $count = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToFilter('status', 1)
+            ->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')))
+            ->getSize();
+
+        return $count;
+    }
+
     public function getAllProductIds()
     {
         $collection = Mage::getModel('catalog/product')
