@@ -29,10 +29,10 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $result = $this->typeAllProducts($page);
                 break;
             case 1:
-                $this->typeSelectedProducts();
+                $this->typeSelectedCategories($page);
                 break;
             case 2:
-                $this->typeSelectedCategories($page);
+                $this->typeSelectedProducts();
                 break;
         }
         $this->setResponse($result);
@@ -155,10 +155,10 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $result = Mage::helper('sync')->getCount();
                 break;
             case 1:
-                $this->typeSelectedProducts();
+                $result = Mage::helper('sync')->getCountByCategory();
                 break;
             case 2:
-                $result = Mage::helper('sync')->getCountByCategory();
+                $this->typeSelectedProducts();
                 break;
         }
 

@@ -11,12 +11,12 @@ class Shareino_Sync_Model_Observer
         $productId = $getProduct->getData('entity_id');
 
         $type = Mage::getStoreConfig('shareino/shareino_send_type');
-        if ($type === 1) {
+        if ($type === 0) {
             $run = true;
-        } else if ($type === 2) {
+        } else if ($type === 1) {
             $ids = $this->getCategoryId($productId);
             $run = $this->isExist($ids);
-        } else if ($type === 3) {
+        } else if ($type === 2) {
 
         }
 
