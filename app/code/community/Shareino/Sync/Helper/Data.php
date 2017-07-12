@@ -76,6 +76,21 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         return $count;
     }
 
+    public function getCountByCategory()
+    {
+        $selected = Mage::getStoreConfig('shareino/shareino_selected_categories');
+        $Ids = json_decode($selected, ture);
+
+        $count = 0;
+        foreach ($Ids as $Id) {
+            $count += Mage::getModel('catalog/category')
+                ->load($Id)
+                ->getProductCollection()
+                ->getSize();
+        }
+        return $count;
+    }
+
     public function getAllProductIds()
     {
         $collection = Mage::getModel('catalog/product')

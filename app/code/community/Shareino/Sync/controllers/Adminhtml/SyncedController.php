@@ -32,7 +32,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $this->typeSelectedProducts();
                 break;
             case 2:
-                $this->typeSelectedCategories();
+                $this->typeSelectedCategories($page);
                 break;
         }
         $this->setResponse($result);
@@ -89,9 +89,36 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
 
     }
 
-    protected function typeSelectedCategories()
+    protected function typeSelectedCategories($page, $size = 50)
     {
+        $selected = Mage::getStoreConfig('shareino/shareino_selected_categories');
+        $Ids = json_decode($selected, ture);
 
+        $productIds = array();
+        foreach ($Ids as $Id) {
+            $getAllIds[] = Mage::getModel('catalog/category')
+                ->load($Id)
+                ->getProductCollection()
+                ->getAllIds();
+        }
+
+        foreach ($getAllIds as $getAllId) {
+            for ($i = 0; $i < count($getAllId); $i++) {
+                array_push($productIds, $getAllId[$i]);
+            }
+        }
+
+        $ids = (array_chunk($productIds, $size));
+
+        $products = array();
+        foreach ($ids[$page] as $id) {
+            $products[] = Mage::helper('sync')->getProductById($id);
+        }
+
+        $results = Mage::helper('sync')->sendRequset('products', json_encode($products), 'POST');
+        $this->saveSync($results);
+
+        return $results;
     }
 
     protected function saveSync($results)
@@ -131,7 +158,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $this->typeSelectedProducts();
                 break;
             case 2:
-                $this->typeSelectedCategories();
+                $result = Mage::helper('sync')->getCountByCategory();
                 break;
         }
 
