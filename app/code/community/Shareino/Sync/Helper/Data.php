@@ -10,7 +10,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
     public function sendRequset($url, $body, $method)
     {
         // Get api token from server
-        $SHAREINO_API_TOKEN = Mage::getStoreConfig('shareino/SHAREINO_API_TOKEN');
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig('shareino/shareino_api_token');
         if ($SHAREINO_API_TOKEN) {
 
             // Init curl
