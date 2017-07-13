@@ -18,4 +18,10 @@
             <block type="sync/adminhtml_synced" name="adminsync" template="shareino/configured.phtml"/>
         </reference>
     </sync_adminhtml_configured_index>
+
+    <sync_adminhtml_products_index>
+        <reference name="content">
+            <block type="sync/adminhtml_synced" name="adminsync" template="shareino/products.phtml"/>
+        </reference>
+    </sync_adminhtml_products_index>
 </layout>

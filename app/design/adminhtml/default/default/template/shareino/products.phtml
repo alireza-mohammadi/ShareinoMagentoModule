@@ -1,0 +1,130 @@
+<div class="alert fade in" id="MessageBox" hidden>
+    <p id="MessageText"></p>
+</div>
+<div class="clear"></div>
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend" style="float: right;direction:rtl">ارسال کالاهای انتخابی به شرینو</h4>
+    </div>
+    <div class="fieldset" id="entity_form" dir="rtl">
+        <div class="hor-scroll">
+            <div class="main-div">
+                <form class="save-products" action="<?php echo $this->getOperationAction('saveProducts'); ?>">
+                    <div class="table-responsive">
+                        <table class="table table-striped b-t b-light">
+                            <thead>
+                                <tr>
+                                    <th width="20"></th>
+                                    <th width="65">شناسه</th>
+                                    <th width="85">تصویر کالا</th>
+                                    <th>نام کالا</th>
+                                    <th>قیمت</th>
+                                    <th>تعداد</th>
+                                    <th>وضعیت</th>
+                                    <th width="90">عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $products = Mage::registry('products');
+                                foreach ($products as $product):
+                                    ?>
+                                    <tr>
+                                        <td width="20"><input type="checkbox"  value="<?php echo $product['code']; ?>"></td>
+                                        <td width="65"><?php echo $product['code']; ?></td>
+                                        <th width="85"><img class="thumbnail" src="<?php echo $product['image']; ?>" style="width: 50px;height: 50px"></th>
+                                        <td><?php echo $product['name']; ?></td>
+                                        <td><?php echo $product['price']; ?></td>
+                                        <td><?php echo $product['quantity']; ?></td>
+                                        <td><?php echo $product['active']; ?></td>
+                                <form class="delete-product" action="<?php echo $this->getOperationAction('deleteProduct'); ?>">
+                                    <td width="90"><a class="delete-product" data-product-id="<?php echo $product['code']; ?>">حذف از ارسال</a></td>
+                                </form>
+                                </tr>
+                                <?php
+                            endforeach;
+                            ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped b-t b-light">
+                            <tr>
+                                <th width="100"></th>
+                                <th width="100"></th>
+                                <th width="1">
+                                    <button type="submit" class="scalable save" style="height: 22px">ذخیره</button>
+                                    <button type="submit" class="scalable save" style="height: 22px">صفحه قبل</button>
+                                    <a id="next-page" class="scalable save" style="height: 22px">صفحه بعد</a>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+    jQuery.noConflict();
+    jQuery(function() {
+        var messageBox = jQuery("#MessageBox");
+        var messageText = jQuery("#MessageText");
+        jQuery('.delete-product').on('click', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction('deleteProduct'); ?>',
+                data: {
+                    ajax: true,
+                    action: 'deleteProduct',
+                    product: jQuery(this).data('product-id')
+                },
+                success: function(data, textStatus, jqXHR) {
+                    message(data.status, data.message);
+                },
+                error: function(data) {
+                    message(false, data.message);
+                }
+            });
+        });
+        jQuery('.save-products').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.hide();
+            var products = [];
+            jQuery('input[type=checkbox]:checked').each(function(i) {
+                products[i] = jQuery(this).val();
+            });
+            jQuery.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: '<?php echo $this->getOperationAction('saveProducts'); ?>',
+                data: {
+                    ajax: true,
+                    action: 'saveProducts',
+                    products: products
+                },
+                success: function(data, textStatus, jqXHR) {
+                    message(data.status, data.message);
+                },
+                error: function(data) {
+                    message(false, data.message);
+                }
+            });
+        });
+        function message(status, message) {
+            messageText.html(message);
+            messageBox.show(500);
+            messageBox.addClass(status ? 'alert-success' : 'alert-danger');
+        }
+    });
+</script>
+<style>
+    caption,th{text-align:right}table{background-color:transparent}caption{padding-top:8px;padding-bottom:8px;color:#777}.table{width:100%;max-width:100%;margin-bottom:20px}.table>tbody>tr>td,.table>tbody>tr>th,.table>tfoot>tr>td,.table>tfoot>tr>th,.table>thead>tr>td,.table>thead>tr>th{padding:8px;line-height:1.42857143;vertical-align:top;border-top:1px solid #ddd}.table>thead>tr>th{vertical-align:bottom;border-bottom:2px solid #ddd}.table>caption+thead>tr:first-child>td,.table>caption+thead>tr:first-child>th,.table>colgroup+thead>tr:first-child>td,.table>colgroup+thead>tr:first-child>th,.table>thead:first-child>tr:first-child>td,.table>thead:first-child>tr:first-child>th{border-top:0}.table>tbody+tbody{border-top:2px solid #ddd}.table .table{background-color:#fff}.table-condensed>tbody>tr>td,.table-condensed>tbody>tr>th,.table-condensed>tfoot>tr>td,.table-condensed>tfoot>tr>th,.table-condensed>thead>tr>td,.table-condensed>thead>tr>th{padding:5px}.table-bordered,.table-bordered>tbody>tr>td,.table-bordered>tbody>tr>th,.table-bordered>tfoot>tr>td,.table-bordered>tfoot>tr>th,.table-bordered>thead>tr>td,.table-bordered>thead>tr>th{border:1px solid #ddd}.table-bordered>thead>tr>td,.table-bordered>thead>tr>th{border-bottom-width:2px}.table-striped>tbody>tr:nth-of-type(odd){background-color:#f9f9f9}.table-hover>tbody>tr:hover,.table>tbody>tr.active>td,.table>tbody>tr.active>th,.table>tbody>tr>td.active,.table>tbody>tr>th.active,.table>tfoot>tr.active>td,.table>tfoot>tr.active>th,.table>tfoot>tr>td.active,.table>tfoot>tr>th.active,.table>thead>tr.active>td,.table>thead>tr.active>th,.table>thead>tr>td.active,.table>thead>tr>th.active{background-color:#f5f5f5}table col[class*=col-]{position:static;float:none;display:table-column}table td[class*=col-],table th[class*=col-]{position:static;float:none;display:table-cell}.table-hover>tbody>tr.active:hover>td,.table-hover>tbody>tr.active:hover>th,.table-hover>tbody>tr:hover>.active,.table-hover>tbody>tr>td.active:hover,.table-hover>tbody>tr>th.active:hover{background-color:#e8e8e8}.table>tbody>tr.success>td,.table>tbody>tr.success>th,.table>tbody>tr>td.success,.table>tbody>tr>th.success,.table>tfoot>tr.success>td,.table>tfoot>tr.success>th,.table>tfoot>tr>td.success,.table>tfoot>tr>th.success,.table>thead>tr.success>td,.table>thead>tr.success>th,.table>thead>tr>td.success,.table>thead>tr>th.success{background-color:#dff0d8}.table-hover>tbody>tr.success:hover>td,.table-hover>tbody>tr.success:hover>th,.table-hover>tbody>tr:hover>.success,.table-hover>tbody>tr>td.success:hover,.table-hover>tbody>tr>th.success:hover{background-color:#d0e9c6}.table>tbody>tr.info>td,.table>tbody>tr.info>th,.table>tbody>tr>td.info,.table>tbody>tr>th.info,.table>tfoot>tr.info>td,.table>tfoot>tr.info>th,.table>tfoot>tr>td.info,.table>tfoot>tr>th.info,.table>thead>tr.info>td,.table>thead>tr.info>th,.table>thead>tr>td.info,.table>thead>tr>th.info{background-color:#d9edf7}.table-hover>tbody>tr.info:hover>td,.table-hover>tbody>tr.info:hover>th,.table-hover>tbody>tr:hover>.info,.table-hover>tbody>tr>td.info:hover,.table-hover>tbody>tr>th.info:hover{background-color:#c4e3f3}.table>tbody>tr.warning>td,.table>tbody>tr.warning>th,.table>tbody>tr>td.warning,.table>tbody>tr>th.warning,.table>tfoot>tr.warning>td,.table>tfoot>tr.warning>th,.table>tfoot>tr>td.warning,.table>tfoot>tr>th.warning,.table>thead>tr.warning>td,.table>thead>tr.warning>th,.table>thead>tr>td.warning,.table>thead>tr>th.warning{background-color:#fcf8e3}.table-hover>tbody>tr.warning:hover>td,.table-hover>tbody>tr.warning:hover>th,.table-hover>tbody>tr:hover>.warning,.table-hover>tbody>tr>td.warning:hover,.table-hover>tbody>tr>th.warning:hover{background-color:#faf2cc}.table>tbody>tr.danger>td,.table>tbody>tr.danger>th,.table>tbody>tr>td.danger,.table>tbody>tr>th.danger,.table>tfoot>tr.danger>td,.table>tfoot>tr.danger>th,.table>tfoot>tr>td.danger,.table>tfoot>tr>th.danger,.table>thead>tr.danger>td,.table>thead>tr.danger>th,.table>thead>tr>td.danger,.table>thead>tr>th.danger{background-color:#f2dede}.table-hover>tbody>tr.danger:hover>td,.table-hover>tbody>tr.danger:hover>th,.table-hover>tbody>tr:hover>.danger,.table-hover>tbody>tr>td.danger:hover,.table-hover>tbody>tr>th.danger:hover{background-color:#ebcccc}.table-responsive{overflow-x:auto;min-height:.01%}
+    .thumbnail{display:block;padding:4px;margin-bottom:20px;line-height:1.42857143;background-color:#fff;border:1px solid #ddd;border-radius:4px;-webkit-transition:border .2s ease-in-out;-o-transition:border .2s ease-in-out;transition:border .2s ease-in-out}.thumbnail a>img,.thumbnail>img{margin-left:auto;margin-right:auto}a.thumbnail.active,a.thumbnail:focus,a.thumbnail:hover{border-color:#337ab7}.thumbnail .caption{padding:9px;color:#333}
+    .fade.in{opacity:1}.alert{padding:10px;margin-bottom:20px;border:1px solid transparent;border-radius:4px;direction:rtl;font-size:14px}.alert-success{color:#3c763d;background-color:#dff0d8;border-color:#d6e9c6}.alert-danger{color:#a94442;background-color:#f2dede;border-color:#ebccd1}.alert-warning{background-color:#fcf8e3;border-color:#faf2cc;color:#8a6d3b}.alert-info{background-color:#d9edf7;border-color:#bcdff1;color:#31708f}.fade{opacity:0;-webkit-transition:opacity .15s linear;-o-transition:opacity .15s linear;transition:opacity .15s linear}
+</style>
