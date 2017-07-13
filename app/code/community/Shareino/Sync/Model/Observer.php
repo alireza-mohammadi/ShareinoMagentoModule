@@ -15,9 +15,12 @@ class Shareino_Sync_Model_Observer
             $run = true;
         } else if ($type === 1) {
             $ids = $this->getCategoryId($productId);
-            $run = $this->isExist($ids, 'category');
+            $run = $this->isExist($ids);
         } else if ($type === 2) {
-            $run = $this->isExist($ids, 'product');
+            $inside = Mage::getStoreConfig('shareino/shareino_selected_products');
+            if (array_search($productId, $inside) !== false) {
+                $run = true;
+            }
         }
 
         if ($run) {
@@ -64,13 +67,9 @@ class Shareino_Sync_Model_Observer
         Mage::helper('sync')->sendRequset('products', json_encode($body), 'DELETE');
     }
 
-    protected function isExist($ids, $type)
+    protected function isExist($ids)
     {
-        if ($type === 'category') {
-            $inside = json_decode(Mage::getStoreConfig('shareino/shareino_selected_categories'), ture);
-        } else if ($type === 'product') {
-            $inside = json_decode(Mage::getStoreConfig('shareino/shareino_selected_products'), ture);
-        }
+        $inside = json_decode(Mage::getStoreConfig('shareino/shareino_selected_categories'), ture);
 
         foreach ($ids as $id) {
             if (array_search($id, $inside) !== false) {
