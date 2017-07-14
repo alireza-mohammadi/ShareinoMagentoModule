@@ -29,22 +29,20 @@
                                 <?php
                                 $products = Mage::registry('products');
                                 foreach ($products as $product):
-                                    ?>
+                                ?>
                                     <tr>
                                         <td width="20"><input type="checkbox"  value="<?php echo $product['code']; ?>"></td>
                                         <td width="65"><?php echo $product['code']; ?></td>
                                         <th width="85"><img class="thumbnail" src="<?php echo $product['image']; ?>" style="width: 50px;height: 50px"></th>
                                         <td><?php echo $product['name']; ?></td>
                                         <td><?php echo $product['price']; ?></td>
-                                        <td><?php echo $product['quantity']; ?></td>
+                                        <td><?php echo (int)$product['quantity']; ?></td>
                                         <td><?php echo $product['active']; ?></td>
-                                <form class="delete-product" action="<?php echo $this->getOperationAction('deleteProduct'); ?>">
-                                    <td width="90"><a class="delete-product" data-product-id="<?php echo $product['code']; ?>">حذف از ارسال</a></td>
-                                </form>
-                                </tr>
-                                <?php
-                            endforeach;
-                            ?>
+                                        <form class="delete-product" action="<?php echo $this->getOperationAction('deleteProduct'); ?>">
+                                            <td width="90"><a class="delete-product" data-product-id="<?php echo $product['code']; ?>">حذف از ارسال</a></td>
+                                        </form>
+                                    </tr>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
