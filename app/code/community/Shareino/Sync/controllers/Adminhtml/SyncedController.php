@@ -92,7 +92,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         $ids = (array_chunk($Ids, $size));
 
         $products = array();
-        foreach ($ids[$page] as $id) {
+        foreach ($ids[--$page] as $id) {
             $products[] = Mage::helper('sync')->getProductById($id);
         }
 
@@ -107,7 +107,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         $selected = Mage::getStoreConfig('shareino/shareino_selected_categories');
         $Ids = json_decode($selected, true);
 
-        $productIds = array();
+        $getAllIds = array();
         foreach ($Ids as $Id) {
             $getAllIds[] = Mage::getModel('catalog/category')
                 ->load($Id)
@@ -115,6 +115,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 ->getAllIds();
         }
 
+        $productIds = array();
         foreach ($getAllIds as $getAllId) {
             for ($i = 0; $i < count($getAllId); $i++) {
                 array_push($productIds, $getAllId[$i]);
@@ -124,7 +125,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         $ids = (array_chunk($productIds, $size));
 
         $products = array();
-        foreach ($ids[$page] as $id) {
+        foreach ($ids[--$page] as $id) {
             $products[] = Mage::helper('sync')->getProductById($id);
         }
 
