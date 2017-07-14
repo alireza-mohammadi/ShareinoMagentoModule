@@ -85,16 +85,16 @@
                         <sort_order>1</sort_order>
                         <action>shareinoadmin/adminhtml_configured</action>
                     </configured>
-                    <synced module="sync">
-                        <title>ارسال همه محصولات</title>
-                        <sort_order>2</sort_order>
-                        <action>shareinoadmin/adminhtml_synced</action>
-                    </synced>
                     <products module="sync">
-                        <title>ارسال کالاهای انتخابی</title>
-                        <sort_order>3</sort_order>
+                        <title> کالاهای انتخابی</title>
+                        <sort_order>2</sort_order>
                         <action>shareinoadmin/adminhtml_products</action>
                     </products>
+                    <synced module="sync">
+                        <title>ارسال به شرینو</title>
+                        <sort_order>3</sort_order>
+                        <action>shareinoadmin/adminhtml_synced</action>
+                    </synced>
                 </children>
             </sharein_tab>
         </menu>

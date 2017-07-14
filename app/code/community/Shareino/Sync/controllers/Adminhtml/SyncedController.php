@@ -29,10 +29,10 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $result = $this->typeAllProducts($page);
                 break;
             case 1:
-                $this->typeSelectedCategories($page);
+                $result = $this->typeSelectedCategories($page);
                 break;
             case 2:
-                $this->typeSelectedProducts();
+                $result = $this->typeSelectedProducts($page);
                 break;
         }
         $this->setResponse($result);
@@ -84,15 +84,28 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
         return $results;
     }
 
-    protected function typeSelectedProducts()
+    protected function typeSelectedProducts($page, $size = 50)
     {
+        $selected = Mage::getStoreConfig('shareino/shareino_selected_products');
+        $Ids = json_decode($selected, true);
 
+        $ids = (array_chunk($Ids, $size));
+
+        $products = array();
+        foreach ($ids[$page] as $id) {
+            $products[] = Mage::helper('sync')->getProductById($id);
+        }
+
+        $results = Mage::helper('sync')->sendRequset('products', json_encode($products), 'POST');
+        $this->saveSync($results);
+
+        return $results;
     }
 
     protected function typeSelectedCategories($page, $size = 50)
     {
         $selected = Mage::getStoreConfig('shareino/shareino_selected_categories');
-        $Ids = json_decode($selected, ture);
+        $Ids = json_decode($selected, true);
 
         $productIds = array();
         foreach ($Ids as $Id) {
@@ -149,6 +162,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
     protected function countProducts()
     {
         $type = Mage::getStoreConfig('shareino/shareino_send_type');
+        $result = 0;
 
         switch ($type) {
             case 0:
@@ -158,7 +172,7 @@ class Shareino_Sync_Adminhtml_SyncedController extends Mage_Adminhtml_Controller
                 $result = Mage::helper('sync')->getCountByCategory();
                 break;
             case 2:
-                $this->typeSelectedProducts();
+                $result = count(json_decode(Mage::getStoreConfig('shareino/shareino_selected_products'), true));
                 break;
         }
 

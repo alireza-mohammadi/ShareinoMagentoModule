@@ -54,9 +54,19 @@
                                 <th width="100"></th>
                                 <th width="100"></th>
                                 <th width="1">
+                                    <?php
+                                    $page = $this->getRequest()->getParam('page');
+                                    if (empty($page)):
+                                        $next = 1;
+                                        $previous = 0;
+                                    else:
+                                        $next = $page + 1;
+                                        $previous = $next - 1;
+                                    endif;
+                                    ?>
                                     <button type="submit" class="scalable save" style="height: 22px">ذخیره</button>
-                                    <button type="submit" class="scalable save" style="height: 22px">صفحه قبل</button>
-                                    <a id="next-page" class="scalable save" style="height: 22px">صفحه بعد</a>
+                                    <a href="<?php echo $this->getOperationAction('index') . "?page=$previous"; ?>" style="margin-right: 20px">صفحه قبل</a>
+                                    <a href="<?php echo $this->getOperationAction('index') . "?page=$next"; ?>"style="margin-right: 5px">صفحه بعد</a>
                                 </th>
                             </tr>
                         </table>

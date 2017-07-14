@@ -11,9 +11,10 @@ class Shareino_Sync_Adminhtml_ProductsController extends Mage_Adminhtml_Controll
 
     public function indexAction()
     {
+        $id = $this->getRequest()->getParam('page');
         $this->loadLayout();
         $this->_setActiveMenu('sharein_tab/');
-        Mage::register('products', $this->selectAllProducts(0));
+        Mage::register('products', $this->selectAllProducts($id));
         $this->_addBreadcrumb(Mage::helper('sync')->__('Form'), Mage::helper('sync')->__('Synchronization'));
 
         $this->renderLayout();
@@ -45,7 +46,7 @@ class Shareino_Sync_Adminhtml_ProductsController extends Mage_Adminhtml_Controll
     protected function selectAllProducts($page)
     {
         $ids = Mage::getModel('catalog/product')->getCollection();
-        $ids->setPage($page, 4);
+        $ids->setPage($page, 3);
 
         $ids->addAttributeToFilter('status', 1)
             ->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
