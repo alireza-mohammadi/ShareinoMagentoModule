@@ -46,7 +46,7 @@ class Shareino_Sync_Adminhtml_ProductsController extends Mage_Adminhtml_Controll
     protected function selectAllProducts($page)
     {
         $ids = Mage::getModel('catalog/product')->getCollection();
-        $ids->setPage($page, 3);
+        $ids->setPage($page, 30);
 
         $ids->addAttributeToFilter('status', 1)
             ->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));

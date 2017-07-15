@@ -27,11 +27,12 @@
                             </thead>
                             <tbody>
                                 <?php
+                                $exist = json_decode(Mage::getStoreConfig('shareino/shareino_selected_products'), true);
                                 $products = Mage::registry('products');
                                 foreach ($products as $product):
                                 ?>
                                     <tr>
-                                        <td width="20"><input type="checkbox"  value="<?php echo $product['code']; ?>"></td>
+                                        <td width="20"><input type="checkbox"  value="<?php echo $product['code']; ?>" <?php if(array_search($product['code'],$exist) !==false){ echo'checked';} ?>></td>
                                         <td width="65"><?php echo $product['code']; ?></td>
                                         <th width="85"><img class="thumbnail" src="<?php echo $product['image']; ?>" style="width: 50px;height: 50px"></th>
                                         <td><?php echo $product['name']; ?></td>
