@@ -15,7 +15,7 @@
                         <table class="table table-striped b-t b-light">
                             <thead>
                                 <tr>
-                                    <th width="20"></th>
+                                    <th width="20">#</th>
                                     <th width="65">شناسه</th>
                                     <th width="85">تصویر کالا</th>
                                     <th>نام کالا</th>
@@ -32,7 +32,7 @@
                                 foreach ($products as $product):
                                 ?>
                                     <tr>
-                                        <td width="20"><input type="checkbox"  value="<?php echo $product['code']; ?>" <?php if(array_search($product['code'],$exist) !==false){ echo'checked';} ?>></td>
+                                        <td width="20"><input type="checkbox" id="product-id-<?php echo $product['code']; ?>" value="<?php echo $product['code']; ?>" <?php if(array_search($product['code'],$exist) !==false){ echo'checked';} ?>></td>
                                         <td width="65"><?php echo $product['code']; ?></td>
                                         <th width="85"><img class="thumbnail" src="<?php echo $product['image']; ?>" style="width: 50px;height: 50px"></th>
                                         <td><?php echo $product['name']; ?></td>
@@ -84,6 +84,7 @@
         jQuery('.delete-product').on('click', function(e) {
             e.preventDefault();
             messageBox.hide();
+            var id = jQuery(this).data('product-id');
             jQuery.ajax({
                 type: 'GET',
                 dataType: 'JSON',
@@ -91,9 +92,10 @@
                 data: {
                     ajax: true,
                     action: 'deleteProduct',
-                    product: jQuery(this).data('product-id')
+                    product: id
                 },
                 success: function(data, textStatus, jqXHR) {
+                    jQuery('#product-id-' + id).prop('checked', false);
                     message(data.status, data.message);
                 },
                 error: function(data) {
