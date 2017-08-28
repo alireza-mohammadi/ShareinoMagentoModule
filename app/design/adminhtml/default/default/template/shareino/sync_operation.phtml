@@ -139,7 +139,6 @@
                         }
                     } else {
                         setPercentage();
-                        pageNumber++;
                         SyncProducts();
                     }
                 },
@@ -149,6 +148,7 @@
                     messageBox.addClass("alert-danger");
                 }
             });
+            pageNumber++;
         }
         function setPercentage() {
             var percentage = Math.round((100 * (pageNumber * split)) / countProduct);
