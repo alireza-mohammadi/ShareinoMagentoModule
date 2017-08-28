@@ -5,7 +5,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
     //const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
-    const Version = '1.1.0';
+    const Version = '1.1.1';
 
     public function sendRequset($url, $body, $method)
     {
@@ -57,6 +57,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                 case 408:
                     return array('status' => false, 'message' => 'خطا! درخواست منقضی شد.');
                 case 429:
+                case 0:
                     return array('status' => false, 'code' => 429, 'message' => 'فرایند ارسال محصولات به طول می انجامد لطفا صبور باشید.');
                 default:
                     return array('status' => false, 'message' => $httpcode);
