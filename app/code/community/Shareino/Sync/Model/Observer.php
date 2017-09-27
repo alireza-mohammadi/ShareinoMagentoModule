@@ -10,7 +10,7 @@ class Shareino_Sync_Model_Observer
         $getProduct = $observer->getEvent()->getProduct();
         $productId = $getProduct->getData('entity_id');
 
-        $type = Mage::getStoreConfig('shareino/shareino_send_type');
+        $type = (int)Mage::getStoreConfig('shareino/shareino_send_type');
         if ($type === 0) {
             $run = true;
         } else if ($type === 1) {
@@ -25,7 +25,7 @@ class Shareino_Sync_Model_Observer
 
         if ($run) {
             $product = Mage::helper('sync')->getProductById($productId);
-
+            
             $results = Mage::helper('sync')->sendRequset('products', json_encode($product), 'POST');
             if ($results === null) {
                 return;
