@@ -226,7 +226,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             'variants' => $variations,
             'categories' => $this->getCategoryId($product->getId()),
             'available_for_order' => 1,
-            'out_of_stock' => 0,
+            'out_of_stock' => $product->getStockItem()->getIsInStock() ? 1 : 0,
             'attributes' => $this->getAttributesProduct($product)
         );
 
