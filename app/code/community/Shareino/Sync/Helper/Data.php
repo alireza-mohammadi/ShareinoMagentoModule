@@ -5,7 +5,7 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 
     const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
     //const SHAREINO_API_URL = 'http://shareino.dev/api/v1/public/';
-    const Version = '1.1.1';
+    const Version = '1.1.2';
 
     public function sendRequset($url, $body, $method)
     {
@@ -213,9 +213,9 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             'quantity' => $stock->getQty() >= 0 ? $stock->getQty() : 0,
             'weight' => $product->getWeight() ? $product->getWeight() : 0,
             'original_url' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getUrlPath(),
-            'original_url_1' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getProductUrl(),
-            'original_url_2' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $product->getUrlInStore(),
-            'brand_id' => "",
+            'original_url_1' => $product->getProductUrl(),
+            'original_url_2' => $product->getUrlInStore(),
+            'brand_id' => '',
             'short_content' => $product->getShortDescription(),
             'long_content' => $product->getDescription(),
             'meta_keywords' => $product->getMetaKeyword(),
@@ -254,9 +254,10 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $listDiscounts = array();
         //قیمت های ویژه
-        if ($product->getSpecialPrice()) {
+        if (($product->getPrice() != $product->getFinalPrice()) || $product->getSpecialPrice()) {
+            $specialPrice = $product->getSpecialPrice() ? $product->getSpecialPrice() : $product->getFinalPrice();
             $listDiscounts[] = array(
-                'amount' => $product->getPrice() - $product->getSpecialPrice(),
+                'amount' => $product->getPrice() - $specialPrice,
                 'start_date' => $product->getsPecialFromDate() ? $product->getsPecialFromDate() : '0000-00-00 00:00:00',
                 'end_date' => $product->getSpecialToDate() ? $product->getSpecialToDate() : '0000-00-00 00:00:00',
                 'quantity' => 1,
