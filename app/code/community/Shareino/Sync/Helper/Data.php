@@ -3,52 +3,26 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
-    const SHAREINO_API_URL = 'https://shareino.ir/api/v1/public/';
-    const Version = '1.1.3';
-
     public function sendRequset($url, $body, $method)
     {
-        // Get api token from server
-        $SHAREINO_API_TOKEN = Mage::getStoreConfig('shareino/shareino_api_token');
-        if ($SHAREINO_API_TOKEN) {
+        $apiToken = Mage::getStoreConfig('shareino/shareino_api_token');
 
-            // Init curl
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-            // SSL check
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-
-            // Generate url and set method in url
-            $url = self::SHAREINO_API_URL . $url;
-            curl_setopt($curl, CURLOPT_URL, $url);
-
-            // Set method in curl
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-
-            // Set Body if its exist
-            if ($body != null) {
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
-            }
-
-            // Get result
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                "Authorization:Bearer $SHAREINO_API_TOKEN",
-                'User-Agent: Magento_module_' . self::Version
-                )
+        if ($apiToken) {
+            $headers = array(
+                "Authorization:Bearer $apiToken",
+                "User-Agent:Magento_module_1.1.4"
             );
 
-            // Get result
-            $result = curl_exec($curl);
+            $url = "https://dokme.com/api/v1/public/$url";
+            $http = new Varien_Http_Adapter_Curl();
 
-            // Get Header Response header
-            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
+            $http->write($method, $url, '1.1', $headers, $body);
+            $response = $http->read();
 
-            switch ($httpcode) {
+            $code = Zend_Http_Response::extractCode($response);
+            switch ($code) {
                 case 200:
-                    return json_decode($result, true);
+                    return array('status' => true, 'message' => 'ارسال با موفقیت انجام شد.');
                 case 401:
                     return array('status' => false, 'message' => 'خطا! توکن وارد شده معتبر نمیباشد.');
                 case 403:
@@ -59,10 +33,12 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                 case 0:
                     return array('status' => false, 'code' => 429, 'message' => 'فرایند ارسال محصولات به طول می انجامد لطفا صبور باشید.');
                 default:
-                    return array('status' => false, 'message' => $httpcode);
+                    return array('status' => false, 'message' => $code);
             }
+            $http->close();
         }
-        return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید');
+
+        return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید.');
     }
 
     public function getCount()
