@@ -1,15 +1,15 @@
 <div id="wraper" style="margin-bottom: 32px">
     <div class="col-8">
         <ul>
-            <li>ابتدا توکن خود را از سایت <a href="https://www.ShareINO.ir" target="_blank" title="شرینو - شبکه اجتماعی خرید">شرینو</a> دریافت کنید.</li>
+            <li>ابتدا توکن خود را از سایت <a href="https://dokme.com" target="_blank" title="دکمه - شبکه اجتماعی خرید">دکمه</a> دریافت کنید.</li>
             <li>در صورت بروز هر گونه خطا ابتدا از صحت توکن خود اطمینان حاصل کنید</li>
-            <li>کالاهای شما بعد از دریافت تصاویر در سایت شرینو قابل مشاهده میباشند</li>
+            <li>کالاهای شما بعد از دریافت تصاویر در سایت دکمه قابل مشاهده میباشند</li>
             <li>در صورت بروز هر گونه مشکل یا ابهامی می‌توانید با کارشناسان ما در ارتباط باشید</li>
         </ul>
     </div>
     <div class="col-4">
-        <a href="https://www.ShareINO.ir" target="_blank" title="شرینو -شبکه اجتماعی خرید">
-            <img src="<?php echo $this->getSkinUrl("images/shareino_logo.png") ?>" alt="شرینو - شبکه اجتماعی خرید" style="height: 60px" />
+        <a href="https://dokme.com" target="_blank" title="دکمه -شبکه اجتماعی خرید">
+            <img src="<?php echo $this->getSkinUrl("images/dokme-logo.png") ?>" alt="دکمه - شبکه اجتماعی خرید" style="height: 60px" />
         </a>
     </div>
     <div class="clear"></div>
@@ -34,7 +34,7 @@
                 <form class="sync-category" action="<?php echo $this->getOperationAction("syncCategory"); ?>">
                     <button type="submit" class="scalable save" style="height: 22px">ارسال دسته بندی ها</button>
                 </form>
-                <p>قبل از ارسال محصولات به شرینو, لازم است ابتدا دسته بندی های خود را ارسال کنید.</p>
+                <p>قبل از ارسال محصولات به دکمه, لازم است ابتدا دسته بندی های خود را ارسال کنید.</p>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
                 <form class="sync-products" action="<?php echo $this->getOperationAction("syncProducts"); ?>">
                     <button type="submit" class="scalable save" style="height: 22px">ارسال محصولات</button>
                 </form>
-                <p>در این قسمت میتوانید محصولات خود را به شرینو ارسال کنید.</p>
+                <p>در این قسمت میتوانید محصولات خود را به دکمه ارسال کنید.</p>
             </div>
         </div>
     </div>
@@ -80,7 +80,7 @@
                         messageBox.addClass('alert-danger');
                     }
                     if (data.status === true) {
-                        messageText.html("دسته بندی ها شما با موفقیت به سایت شرینو ارسال شد.");
+                        messageText.html("دسته بندی ها شما با موفقیت به سایت دکمه ارسال شد.");
                         messageBox.show(500);
                         messageBox.addClass('alert-success');
                     }
@@ -109,7 +109,7 @@
 
         function SyncProducts() {
             if (pageNumber > pageCount) {
-                messageText.html('تمام محصولات شما با موفقیت به سایت شرینو ارسال شد.');
+                messageText.html('تمام محصولات شما با موفقیت به سایت دکمه ارسال شد.');
                 messageBox.removeClass('alert-warning');
                 messageBox.removeClass('alert-danger');
                 messageBox.addClass('alert-success');

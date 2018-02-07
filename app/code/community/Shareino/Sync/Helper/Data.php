@@ -3,26 +3,52 @@
 class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
+    const SHAREINO_API_URL = 'https://dokme.com/api/v1/public/';
+    const Version = '1.1.4';
+
     public function sendRequset($url, $body, $method)
     {
-        $apiToken = Mage::getStoreConfig('shareino/shareino_api_token');
+        // Get api token from server
+        $SHAREINO_API_TOKEN = Mage::getStoreConfig('shareino/shareino_api_token');
+        if ($SHAREINO_API_TOKEN) {
 
-        if ($apiToken) {
-            $headers = array(
-                "Authorization:Bearer $apiToken",
-                "User-Agent:Magento_module_1.1.4"
+            // Init curl
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+            // SSL check
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+
+            // Generate url and set method in url
+            $url = self::SHAREINO_API_URL . $url;
+            curl_setopt($curl, CURLOPT_URL, $url);
+
+            // Set method in curl
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+
+            // Set Body if its exist
+            if ($body != null) {
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+            }
+
+            // Get result
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                "Authorization:Bearer $SHAREINO_API_TOKEN",
+                'User-Agent: Magento_module_' . self::Version
+                )
             );
 
-            $url = "https://dokme.com/api/v1/public/$url";
-            $http = new Varien_Http_Adapter_Curl();
+            // Get result
+            $result = curl_exec($curl);
 
-            $http->write($method, $url, '1.1', $headers, $body);
-            $response = $http->read();
+            // Get Header Response header
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
 
-            $code = Zend_Http_Response::extractCode($response);
-            switch ($code) {
+            switch ($httpcode) {
                 case 200:
-                    return array('status' => true, 'message' => 'ارسال با موفقیت انجام شد.');
+                    return json_decode($result, true);
                 case 401:
                     return array('status' => false, 'message' => 'خطا! توکن وارد شده معتبر نمیباشد.');
                 case 403:
@@ -33,12 +59,10 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
                 case 0:
                     return array('status' => false, 'code' => 429, 'message' => 'فرایند ارسال محصولات به طول می انجامد لطفا صبور باشید.');
                 default:
-                    return array('status' => false, 'message' => $code);
+                    return array('status' => false, 'message' => $httpcode);
             }
-            $http->close();
         }
-
-        return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید.');
+        return array('status' => false, 'message' => 'ابتدا توکن را از سرور شرینو دریافت کنید');
     }
 
     public function getCount()
@@ -46,7 +70,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
         $count = Mage::getModel('catalog/product')
             ->getCollection()
             ->addAttributeToFilter('status', 1)
-            ->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')))
+            ->addAttributeToFilter('visibility', [2, 3, 4])
+            //->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '4')))
             ->getSize();
 
         return $count;
@@ -73,7 +98,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             ->getCollection();
 
         $collection->addAttributeToFilter('status', 1);
-        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
+        $collection->addAttributeToFilter('visibility', [2, 3, 4]);
+        //$collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
         $collection->addAttributeToFilter('entity_id', array('nin' => $this->getConfSimpleProduct()));
 
         $_productCollection = $collection->load();
@@ -91,7 +117,8 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             ->getCollection();
         $collection->addAttributeToFilter('type_id', 'configurable');
         $collection->addAttributeToFilter('status', 1);
-        $collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
+        $collection->addAttributeToFilter('visibility', [2, 3, 4]);
+        //$collection->addFieldToFilter(array(array('attribute' => 'visibility', 'neq' => '1')));
 
         $_productCollection = $collection->load();
 
@@ -178,6 +205,11 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             $productImages[] = $image['url'];
         }
 
+        $available_for_order = 1;
+        if ($product->getVisibility() == 1) {
+            $available_for_order = 0;
+        }
+
         $productDetail = array(
             'name' => $product->getName(),
             'code' => $product->getId(),
@@ -197,10 +229,10 @@ class Shareino_Sync_Helper_Data extends Mage_Core_Helper_Abstract
             'meta_description' => $product->getMetaDescription(),
             'image' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage(),
             'images' => $productImages,
-            'tags' => "",
+            'tags' => '',
             'variants' => $variations,
             'categories' => $this->getCategoryId($product->getId()),
-            'available_for_order' => 1,
+            'available_for_order' => $available_for_order,
             'out_of_stock' => $product->getStockItem()->getIsInStock() ? 1 : 0,
             'attributes' => $this->getAttributesProduct($product)
         );

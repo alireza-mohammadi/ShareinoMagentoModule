@@ -26,7 +26,7 @@ class Shareino_Sync_Adminhtml_ProductsController extends Mage_Adminhtml_Controll
         $saveId = $this->compareIds($ids);
 
         Mage::getConfig()->saveConfig('shareino/shareino_selected_products', json_encode($saveId), 'default', 0);
-        $this->setResponse(['status' => true, 'message' => 'کالاهای انتخاب شده به شرینو  ارسال خواهند شد.']);
+        $this->setResponse(['status' => true, 'message' => 'کالاهای انتخاب شده به دکمه  ارسال خواهند شد.']);
     }
 
     public function deleteProductAction()
@@ -40,7 +40,7 @@ class Shareino_Sync_Adminhtml_ProductsController extends Mage_Adminhtml_Controll
         $newIds = $this->array_pluck(array_diff($ids, array($removeId)));
 
         Mage::getConfig()->saveConfig('shareino/shareino_selected_products', json_encode($newIds), 'default', 0);
-        $this->setResponse(['status' => true, 'message' => 'کالا دیگر به شرینو ارسال نمیشود.']);
+        $this->setResponse(['status' => true, 'message' => 'کالا دیگر به دکمه ارسال نمیشود.']);
     }
 
     protected function selectAllProducts($page)
